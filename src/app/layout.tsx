@@ -2,13 +2,14 @@
 import type { Metadata } from "next";
 import { Work_Sans, Josefin_Sans } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "react-hot-toast";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const workSans = Work_Sans({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-body", // Menghubungkan ke variabel CSS --font-body
+  variable: "--font-body",
   weight: ["300", "400", "500", "600", "700"], // Berat font yang akan digunakan
 });
 
@@ -37,8 +38,9 @@ export default function RootLayout({
         className={`${workSans.variable} ${josefinSans.variable} font-body bg-light-cream text-deep-mocha antialiased`}
       >
         {children}
-        <Analytics />
+        <Toaster />
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
