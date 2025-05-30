@@ -6,16 +6,22 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import toast from "react-hot-toast";
 
+// export const metadata: Metadata = { // Metadata ini akan dihandle oleh parent layout
+//   title: "Login Mudir - Menurutmu Admin",
+//   description: "Halaman login untuk panel administrasi Menurutmu.",
+// };
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams(); // Hook yang menyebabkan masalah ini
   const supabase = createClient();
 
+  // Ambil URL tujuan setelah login berhasil
   const redirectedFrom = searchParams.get("redirectedFrom") || "/mudir";
-  const message = searchParams.get("message");
+  const message = searchParams.get("message"); // Untuk pesan error dari middleware
 
   useEffect(() => {
     if (message) {
@@ -37,7 +43,6 @@ export default function LoginPage() {
       toast.error(`Login Gagal: ${error.message}`);
       console.error("Login Error:", error.message);
     } else {
-      // Cek role setelah login berhasil
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -72,7 +77,7 @@ export default function LoginPage() {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 rounded-md bg-clay-pink text-deep-mocha border border-clay-pink 
+              className="w-full p-3 rounded-md bg-clay-pink text-deep-mocha border border-clay-pink
                          focus:ring-2 focus:ring-deep-mocha focus:outline-none placeholder-deep-mocha"
               placeholder="admin@menurutmu.com"
               required
@@ -88,7 +93,7 @@ export default function LoginPage() {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 rounded-md bg-clay-pink text-deep-mocha border border-clay-pink 
+              className="w-full p-3 rounded-md bg-clay-pink text-deep-mocha border border-clay-pink
                          focus:ring-2 focus:ring-deep-mocha focus:outline-none placeholder-deep-mocha"
               placeholder="******"
               required
@@ -98,7 +103,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-deep-mocha text-light-cream p-3 rounded-md font-body text-lg 
+            className="w-full bg-deep-mocha text-light-cream p-3 rounded-md font-body text-lg
                        hover:bg-clay-pink hover:text-deep-mocha transition-colors duration-300
                        disabled:opacity-50 disabled:cursor-not-allowed"
           >

@@ -1,7 +1,7 @@
 // src/app/mudir/layout.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 //import type { Metadata } from "next";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
@@ -31,8 +31,17 @@ export default function MudirLayout({
       <div className="flex flex-col min-h-screen md:pl-64">
         <AdminHeader onOpenSidebar={() => setIsSidebarOpen(true)} />
 
+        {/* Bungkus children dengan Suspense */}
         <main className="flex-grow p-4 md:p-8 pb-20 md:pb-8 bg-light-cream">
-          {children}
+          <Suspense
+            fallback={
+              <div className="flex justify-center items-center h-full text-deep-mocha text-xl font-body">
+                Memuat...
+              </div>
+            }
+          >
+            {children}
+          </Suspense>
         </main>
 
         <AdminBottomNav />
