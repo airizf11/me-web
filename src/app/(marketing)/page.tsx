@@ -1,7 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/no-unescaped-entities */
 // src/app/(marketing)/page.tsx
 import { Metadata } from "next";
 import { Carousel } from "@/components/Carousel";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faWhatsapp,
+  faShopify,
+  faGrav, // Perlu diinstal jika belum, atau gunakan alternatif
+  faGooglePlay, // Alternatif untuk GoFood
+} from "@fortawesome/free-brands-svg-icons";
+import { faStore, faMotorcycle } from "@fortawesome/free-solid-svg-icons";
 
 export const metadata: Metadata = {
   title: "Menurutmu - Refleksi di Setiap Tegukan",
@@ -43,35 +52,39 @@ export default function HomePage() {
         </h2>
         <div className="flex flex-wrap justify-center gap-4">
           <a
-            href="#" // Ganti dengan link WhatsApp Bisnis Anda
+            href="#"
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-deep-mocha text-light-cream px-8 py-3 rounded-full hover:bg-warm-brown transition-colors duration-300 font-body text-lg"
+            className="bg-deep-mocha text-light-cream px-8 py-3 rounded-full hover:bg-warm-brown transition-colors duration-300 font-body text-lg flex items-center justify-center gap-2"
           >
+            <FontAwesomeIcon icon={faWhatsapp} size="lg" />
             Order via WhatsApp
           </a>
           <a
             href="#" // Ganti dengan link GoFood Anda
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-deep-mocha text-light-cream px-8 py-3 rounded-full hover:bg-warm-brown transition-colors duration-300 font-body text-lg"
+            className="bg-deep-mocha text-light-cream px-8 py-3 rounded-full hover:bg-warm-brown transition-colors duration-300 font-body text-lg flex items-center justify-center gap-2"
           >
+            <FontAwesomeIcon icon={faMotorcycle} size="lg" />
             Order via GoFood
           </a>
           <a
             href="#" // Ganti dengan link GrabFood Anda
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-deep-mocha text-light-cream px-8 py-3 rounded-full hover:bg-warm-brown transition-colors duration-300 font-body text-lg"
+            className="bg-deep-mocha text-light-cream px-8 py-3 rounded-full hover:bg-warm-brown transition-colors duration-300 font-body text-lg flex items-center justify-center gap-2"
           >
+            <FontAwesomeIcon icon={faMotorcycle} size="lg" />
             Order via GrabFood
           </a>
           <a
             href="#" // Ganti dengan link ShopeeFood Anda
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-deep-mocha text-light-cream px-8 py-3 rounded-full hover:bg-warm-brown transition-colors duration-300 font-body text-lg"
+            className="bg-deep-mocha text-light-cream px-8 py-3 rounded-full hover:bg-warm-brown transition-colors duration-300 font-body text-lg flex items-center justify-center gap-2"
           >
+            <FontAwesomeIcon icon={faMotorcycle} size="lg" />
             Order via ShopeeFood
           </a>
         </div>

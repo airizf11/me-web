@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/components/Footer.tsx
 import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  Instagram,
-  //Facebook,
-  //Twitter,
-  Smartphone,
-} from "lucide-react";
+  faInstagram,
+  faWhatsapp,
+  faTiktok,
+} from "@fortawesome/free-brands-svg-icons";
 
 export function Footer() {
   return (
@@ -58,31 +59,31 @@ export function Footer() {
           </h3>
           <div className="flex space-x-6 mb-4">
             <a
-              href="https://www.instagram.com/menurutmu_brand"
+              href="https://www.instagram.com/me_nurutmu"
               target="_blank"
               rel="noopener noreferrer"
               className="text-light-cream hover:text-clay-pink transition-colors"
               aria-label="Instagram"
             >
-              <Instagram size={24} />
+              <FontAwesomeIcon icon={faInstagram} size="lg" />
             </a>
             <a
-              href="https://wa.me/6281358511368"
+              href="https://wa.me/6283113156507"
               target="_blank"
               rel="noopener noreferrer"
               className="text-light-cream hover:text-clay-pink transition-colors"
               aria-label="WhatsApp"
             >
-              <Smartphone size={24} />
+              <FontAwesomeIcon icon={faWhatsapp} size="lg" />
             </a>
             <a
-              href="https://www.tiktok.com/@menurutmu_brand"
+              href="https://www.tiktok.com/@menurutmu_"
               target="_blank"
               rel="noopener noreferrer"
               className="text-light-cream hover:text-clay-pink transition-colors"
               aria-label="TikTok"
             >
-              <svg>... </svg>
+              <FontAwesomeIcon icon={faTiktok} size="lg" />
             </a>
           </div>
           <p className="text-sm font-body">

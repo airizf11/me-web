@@ -2,6 +2,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link"; // Import Link
 import { type MenuItem } from "@/lib/types";
 import {
   PencilIcon,
@@ -9,15 +10,15 @@ import {
   EyeIcon,
   EyeSlashIcon,
 } from "@heroicons/react/24/outline";
-import { deleteMenuItem, toggleMenuItemAvailability } from "@/lib/actions/menu"; // Import Server Actions
-import toast from "react-hot-toast"; // Import toast untuk notifikasi
+import { deleteMenuItem, toggleMenuItemAvailability } from "@/lib/actions/menu";
+import toast from "react-hot-toast";
 
 type MenuTableProps = {
   items: MenuItem[];
-  onEdit: (item: MenuItem) => void; // Prop baru untuk callback edit
 };
 
-export function MenuTable({ items, onEdit }: MenuTableProps) {
+export function MenuTable({ items }: MenuTableProps) {
+  // Hapus onEdit dari props
   const handleDelete = async (item: MenuItem) => {
     if (
       confirm(
@@ -26,10 +27,9 @@ export function MenuTable({ items, onEdit }: MenuTableProps) {
     ) {
       toast.loading("Menghapus menu...");
       const result = await deleteMenuItem(item.id);
-      toast.dismiss(); // Tutup loading toast
+      toast.dismiss();
       if (result.success) {
         toast.success(result.message);
-        // Data akan otomatis terupdate karena revalidatePath di Server Action
       } else {
         toast.error(result.message || "Gagal menghapus menu.");
       }
@@ -42,7 +42,6 @@ export function MenuTable({ items, onEdit }: MenuTableProps) {
     toast.dismiss();
     if (result.success) {
       toast.success(result.message);
-      // Data akan otomatis terupdate karena revalidatePath di Server Action
     } else {
       toast.error(result.message || "Gagal mengubah status.");
     }
@@ -141,13 +140,14 @@ export function MenuTable({ items, onEdit }: MenuTableProps) {
                       <EyeSlashIcon className="h-5 w-5" />
                     )}
                   </button>
-                  <button
-                    onClick={() => onEdit(item)}
+                  {/* Gunakan Link untuk tombol edit */}
+                  <Link
+                    href={`/mudir/menus/${item.id}/edit`}
                     className="p-2 rounded-full text-deep-mocha hover:bg-clay-pink transition-colors"
                     aria-label="Edit"
                   >
                     <PencilIcon className="h-5 w-5" />
-                  </button>
+                  </Link>
                   <button
                     onClick={() => handleDelete(item)}
                     className="p-2 rounded-full text-red-600 hover:bg-red-100 transition-colors"
