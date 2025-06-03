@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/components/Footer.tsx
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

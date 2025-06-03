@@ -6,22 +6,32 @@ import { MenuForm } from "@/components/admin/menu/MenuForm";
 import { type MenuItem } from "@/lib/types";
 import { notFound } from "next/navigation";
 
-type EditMenuPageProps = {
-  params: {
+interface EditMenuPageProps {
+  params?: Promise<{
     id: string; // ID menu dari URL
-  };
-};
+  }>;
+}
 
 export async function generateMetadata({
   params,
 }: EditMenuPageProps): Promise<Metadata> {
-  // Langsung deconstruct id dari params untuk akses sinkron
-  const id = params.id;
+  // Secara paksa ekstrak nilai dari Promise (hati-hati!)
+  const resolvedParams = await params;
+  const id = resolvedParams?.id;
+
+  if (!id) {
+    return {
+      title: "Edit Menu - Mudir Menurutmu",
+      description:
+        "Formulir untuk mengedit item menu yang sudah ada di Menurutmu.",
+    };
+  }
+
   const supabase = await createServerSupabaseClient();
   const { data: menuItem } = await supabase
     .from("menus")
     .select("name")
-    .eq("id", id) // Gunakan id yang sudah dideconstruct
+    .eq("id", id)
     .single();
 
   return {
@@ -34,8 +44,15 @@ export async function generateMetadata({
 }
 
 export default async function EditMenuPage({ params }: EditMenuPageProps) {
-  // Langsung deconstruct id dari params untuk akses sinkron
-  const id = params.id;
+  // Secara paksa ekstrak nilai dari Promise
+  const resolvedParams = await params;
+  const id = resolvedParams?.id;
+
+  if (!id) {
+    notFound();
+    return null; // Untuk memuaskan tipe
+  }
+
   const supabase = await createServerSupabaseClient();
   let menuItem: MenuItem | null = null;
   let error: string | null = null;
@@ -44,7 +61,7 @@ export default async function EditMenuPage({ params }: EditMenuPageProps) {
     const { data, error: dbError } = await supabase
       .from("menus")
       .select("*")
-      .eq("id", id) // Gunakan id yang sudah dideconstruct
+      .eq("id", id)
       .single();
 
     if (dbError) {
