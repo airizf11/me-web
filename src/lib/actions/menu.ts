@@ -4,7 +4,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { z } from "zod";
 import { type MenuItem } from "@/lib/types";
@@ -26,46 +25,57 @@ const MenuItemSchema = z.object({
     .optional()
     .nullable(),
   price: z.number().min(0, "Harga tidak boleh negatif."),
-  image_url: z.string().url("URL gambar tidak valid.").optional().nullable(), // URL gambar opsional, bisa null
+  image_url: z
+    .string()
+    .url("URL gambar tidak valid.")
+    .or(z.literal(""))
+    .optional()
+    .nullable(),
   category: z.string().min(1, "Kategori tidak boleh kosong.").default("Coffee"),
   is_available: z.boolean().default(true),
   order_index: z
     .number()
     .int()
-    .min(0, "Order index tidak boleh negatif.")
-    .default(0),
+    .min(0, "Order index harus berupa bilangan bulat positif.")
+    .default(0), // Diperbarui
 });
 
-// Helper function untuk menangani upload gambar ke Supabase Storage (AKAN DITAMBAHKAN NANTI)
+// Helper function untuk Upload Gambar ke Supabase Storage
 async function uploadImageToSupabase(
   file: File,
   supabaseClient: any
 ): Promise<string | null> {
-  // Ini adalah placeholder. Implementasi sebenarnya akan ada di langkah selanjutnya.
-  // Untuk saat ini, kita bisa mock URL atau mengembalikan null.
-  // Contoh mock:
-  console.log(`Simulating upload for: ${file.name}`);
-  // const { data, error } = await supabaseClient.storage.from('menu-images').upload(`public/${file.name}`, file, {
-  //   cacheControl: '3600',
-  //   upsert: false
-  // });
-  // if (error) {
-  //   console.error('Upload failed:', error.message);
-  //   return null;
-  // }
-  // const { data: publicUrl } = supabaseClient.storage.from('menu-images').getPublicUrl(data.path);
-  // return publicUrl?.publicUrl || null;
-  return new Promise((resolve) =>
-    setTimeout(() => {
-      console.log(`Mock upload complete for ${file.name}`);
-      resolve(
-        `https://via.placeholder.com/600x600?text=Uploaded+${file.name.substring(
-          0,
-          10
-        )}`
-      );
-    }, 1000)
-  );
+  if (!file || file.size === 0) {
+    console.warn("No file or empty file provided for upload.");
+    return null;
+  }
+
+  const fileExtension = file.name.split(".").pop();
+  const fileName = `${crypto.randomUUID()}.${fileExtension}`;
+  const filePath = `public/${fileName}`;
+
+  try {
+    const { data, error } = await supabaseClient.storage
+      .from("assets")
+      .upload(filePath, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+
+    if (error) throw error;
+
+    const { data: publicUrlData } = supabaseClient.storage
+      .from("assets")
+      .getPublicUrl(data.path);
+
+    if (!publicUrlData.publicUrl)
+      throw new Error("Gagal mendapatkan URL publik setelah upload.");
+
+    return publicUrlData.publicUrl;
+  } catch (error: any) {
+    console.error("Error uploading image to Supabase Storage:", error.message);
+    return null;
+  }
 }
 
 // --- CREATE MENU ---
@@ -76,27 +86,10 @@ export async function createMenuItem(formData: FormData) {
   const slug = formData.get("slug") as string;
   const description = formData.get("description") as string | null;
   const price = parseFloat(formData.get("price") as string);
-  const rawImageUrl = formData.get("image_url") as string | null; // Ambil URL manual
-  const imageFile = formData.get("image_file") as File | null; // Ambil file upload
   const category = formData.get("category") as string;
   const isAvailable = formData.get("is_available") === "on";
-
-  let finalImageUrl: string | null = null;
-  // Logika penentuan finalImageUrl
-  if (imageFile && imageFile.size > 0) {
-    // Jika ada file yang diupload
-    const uploadedUrl = await uploadImageToSupabase(imageFile, supabase);
-    if (uploadedUrl) {
-      finalImageUrl = uploadedUrl;
-    } else {
-      return { success: false, message: "Gagal mengupload gambar." };
-    }
-  } else if (rawImageUrl) {
-    // Jika ada URL manual
-    finalImageUrl = rawImageUrl;
-  } else {
-    finalImageUrl = null; // Pastikan null jika tidak ada gambar
-  }
+  const imageUrl = formData.get("image_url") as string | null;
+  const orderIndex = parseInt(formData.get("order_index") as string); // Ambil order_index
 
   // Validasi input
   const validatedFields = MenuItemSchema.safeParse({
@@ -104,9 +97,10 @@ export async function createMenuItem(formData: FormData) {
     slug,
     description: description || null,
     price,
-    image_url: finalImageUrl, // Gunakan finalImageUrl setelah proses upload/penentuan
+    image_url: imageUrl || null,
     category,
     is_available: isAvailable,
+    order_index: orderIndex, // Sertakan order_index
   });
 
   if (!validatedFields.success) {
@@ -168,26 +162,10 @@ export async function updateMenuItem(id: string, formData: FormData) {
   const slug = formData.get("slug") as string;
   const description = formData.get("description") as string | null;
   const price = parseFloat(formData.get("price") as string);
-  const rawImageUrl = formData.get("image_url") as string | null;
-  const imageFile = formData.get("image_file") as File | null;
   const category = formData.get("category") as string;
   const isAvailable = formData.get("is_available") === "on";
-
-  let finalImageUrl: string | null = null;
-  if (imageFile && imageFile.size > 0) {
-    // Jika ada file baru diupload
-    const uploadedUrl = await uploadImageToSupabase(imageFile, supabase);
-    if (uploadedUrl) {
-      finalImageUrl = uploadedUrl;
-    } else {
-      return { success: false, message: "Gagal mengupload gambar baru." };
-    }
-  } else if (rawImageUrl) {
-    // Jika tidak ada file baru, tapi ada URL manual
-    finalImageUrl = rawImageUrl;
-  } else {
-    finalImageUrl = null; // Jika tidak ada keduanya, set null
-  }
+  const imageUrl = formData.get("image_url") as string | null;
+  const orderIndex = parseInt(formData.get("order_index") as string); // Ambil order_index
 
   // Validasi input
   const validatedFields = MenuItemSchema.safeParse({
@@ -196,9 +174,10 @@ export async function updateMenuItem(id: string, formData: FormData) {
     slug,
     description: description || null,
     price,
-    image_url: finalImageUrl, // Gunakan finalImageUrl
+    image_url: imageUrl || null,
     category,
     is_available: isAvailable,
+    order_index: orderIndex, // Sertakan order_index
   });
 
   if (!validatedFields.success) {
@@ -263,11 +242,11 @@ export async function deleteMenuItem(id: string) {
   const supabase = await createServerSupabaseClient();
 
   // Opsional: Hapus gambar dari Supabase Storage jika ada
-  // const { data: menuItemToDelete } = await supabase.from('menus').select('image_url').eq('id', id).single();
+  // Anda bisa menambahkan logika di sini untuk menghapus file dari bucket 'assets'
   // if (menuItemToDelete?.image_url && menuItemToDelete.image_url.includes(process.env.NEXT_PUBLIC_SUPABASE_URL!)) {
-  //   const filePath = menuItemToDelete.image_url.split('/').pop(); // Ambil nama file dari URL
+  //   const filePath = menuItemToDelete.image_url.split('/').pop();
   //   if (filePath) {
-  //     const { error: deleteStorageError } = await supabase.storage.from('menu-images').remove([`public/${filePath}`]);
+  //     const { error: deleteStorageError } = await supabase.storage.from('assets').remove([`public/${filePath}`]);
   //     if (deleteStorageError) {
   //       console.error('Error deleting image from storage:', deleteStorageError.message);
   //     }

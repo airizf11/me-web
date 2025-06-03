@@ -6,7 +6,7 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import toast from "react-hot-toast";
-import { createClient } from "@/lib/supabase/client"; // Supabase client untuk Client Components
+import { createClient } from "@/lib/supabase/client";
 import {
   ArrowUpTrayIcon,
   LinkIcon,
@@ -16,43 +16,38 @@ import {
   MagnifyingGlassIcon,
   ArrowPathIcon,
 } from "@heroicons/react/24/outline";
+import { Progress } from "@/components/ui/progress"; // Pastikan file ini ada
 
-// Tipe untuk aset dari Supabase Storage
 interface SupabaseFile {
   name: string;
-  id: string; // Biasanya name bisa jadi ID unik
+  id: string;
   updated_at: string;
   created_at: string;
   last_accessed_at: string;
-  metadata: any; // Metadata tambahan jika ada
-  publicUrl?: string; // URL publik aset
+  metadata: any;
+  publicUrl?: string;
 }
 
 type AssetManagerProps = {
-  // Callback untuk mengembalikan URL aset yang dipilih
   onAssetSelect: (url: string | null) => void;
-  // URL aset awal, misal dari item menu yang sedang diedit
   initialAssetUrl?: string | null;
-  // Jenis aset yang diizinkan untuk upload (misal: 'image/*', 'audio/*')
   allowedFileTypes?: string;
-  // Nama bucket Supabase Storage
   bucketName?: string;
-  // Label untuk input file (misal: "Upload Gambar")
   fileInputLabel?: string;
 };
 
 export function AssetManager({
   onAssetSelect,
   initialAssetUrl = null,
-  allowedFileTypes = "image/*,audio/*", // Default izinkan gambar dan audio
-  bucketName = "assets", // Nama bucket default
+  allowedFileTypes = "image/*,audio/*",
+  bucketName = "assets",
   fileInputLabel = "Pilih file untuk diupload",
 }: AssetManagerProps) {
   const supabase = createClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [activeTab, setActiveTab] = useState<"upload" | "gallery" | "url">(
-    initialAssetUrl ? "url" : "upload" // Default ke URL jika ada, atau upload
+    initialAssetUrl ? "url" : "upload"
   );
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialAssetUrl);
@@ -61,35 +56,54 @@ export function AssetManager({
   const [galleryFiles, setGalleryFiles] = useState<SupabaseFile[]>([]);
   const [loadingGallery, setLoadingGallery] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  useEffect(() => {
+    setPreviewUrl(initialAssetUrl);
+    setManualUrl(initialAssetUrl || "");
+    if (initialAssetUrl) {
+      setActiveTab("url");
+    } else {
+      setActiveTab("upload");
+    }
+  }, [initialAssetUrl]);
 
   // --- Gallery Logic ---
   const fetchGalleryFiles = async () => {
     setLoadingGallery(true);
+    setGalleryFiles([]);
     try {
+      // Supabase storage list() does not return public URLs directly.
+      // We need to fetch and then get public URL for each.
       const { data, error } = await supabase.storage
         .from(bucketName)
         .list("public", {
-          limit: 100, // Ambil 100 aset pertama
+          // list from 'public' folder
+          limit: 100,
           offset: 0,
           sortBy: { column: "created_at", order: "desc" },
         });
 
       if (error) throw error;
 
-      // Filter out directories (if any) and get public URLs
       const filesWithUrls: SupabaseFile[] = data
-        .filter((item) => item.id !== ".emptyFolderPlaceholder") // Supabase specific
+        .filter((item) => item.id !== ".emptyFolderPlaceholder")
         .map((file) => {
+          // IMPORTANT: Check for publicUrl existence and potential errors
+          // The public URL can only be retrieved if the file is in a public bucket
+          // or if the RLS allows public access.
           const { data: publicUrlData } = supabase.storage
             .from(bucketName)
             .getPublicUrl(`public/${file.name}`);
           return { ...file, publicUrl: publicUrlData.publicUrl || null };
         })
-        .filter((file) => file.publicUrl !== null) as SupabaseFile[]; // Ensure publicUrl is not null
+        .filter((file) => file.publicUrl !== null) as SupabaseFile[];
 
       setGalleryFiles(filesWithUrls);
     } catch (error: any) {
-      toast.error(`Gagal memuat galeri aset: ${error.message}`);
+      toast.error(
+        `Gagal memuat galeri aset: ${error.message}. Pastikan RLS Storage sudah diatur!`
+      );
       console.error("Error fetching gallery files:", error.message);
     } finally {
       setLoadingGallery(false);
@@ -108,11 +122,11 @@ export function AssetManager({
     const file = event.target.files?.[0] || null;
     setSelectedFile(file);
     if (file) {
-      setManualUrl(""); // Clear manual URL if file selected
+      setManualUrl("");
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrl(reader.result as string);
-        onAssetSelect(null); // Clear previous selection until uploaded
+        onAssetSelect(null);
       };
       reader.readAsDataURL(file);
     } else {
@@ -128,17 +142,33 @@ export function AssetManager({
     }
 
     setUploading(true);
-    toast.loading("Mengupload file...");
+    setUploadProgress(0);
+    const loadingToastId = toast.loading("Mengupload file...");
 
-    const fileName = `${Date.now()}-${selectedFile.name.replace(/\s/g, "-")}`; // Unique filename
-    const filePath = `public/${fileName}`; // Path di bucket
+    // PENTING: Gunakan pendekatan nama file yang lebih universal dan aman
+    // Menggunakan timestamp + random string + nama asli untuk unik
+    const fileExtension = selectedFile.name.split(".").pop();
+    const uniqueId = Math.random().toString(36).substring(2, 8); // Random string
+    const fileName = `${Date.now()}-${uniqueId}-${selectedFile.name.replace(
+      /\s/g,
+      "-"
+    )}`; // Lebih robust
+    const filePath = `public/${fileName}`;
 
     try {
       const { data, error } = await supabase.storage
         .from(bucketName)
         .upload(filePath, selectedFile, {
           cacheControl: "3600",
-          upsert: false, // Jangan menimpa jika sudah ada
+          upsert: false,
+          // Ini adalah opsional jika Anda ingin progress bar real-time
+          // namun membutuhkan custom upload endpoint atau streaming.
+          // onUploadProgress: (event) => {
+          //   if (event.lengthComputable) {
+          //     const percentCompleted = Math.round((event.loaded * 100) / event.total);
+          //     setUploadProgress(percentCompleted);
+          //   }
+          // },
         });
 
       if (error) throw error;
@@ -150,21 +180,21 @@ export function AssetManager({
       if (!publicUrlData.publicUrl)
         throw new Error("Gagal mendapatkan URL publik.");
 
-      toast.success("Upload berhasil!");
+      toast.success("Upload berhasil!", { id: loadingToastId });
       setSelectedFile(null);
-      setPreviewUrl(publicUrlData.publicUrl); // Tampilkan preview dari URL publik yang baru diupload
-      setManualUrl(publicUrlData.publicUrl); // Isi manual URL juga
-      onAssetSelect(publicUrlData.publicUrl); // Kirim URL kembali ke parent
-      setActiveTab("url"); // Pindah ke tab URL setelah upload
-      fetchGalleryFiles(); // Refresh galeri
+      setPreviewUrl(publicUrlData.publicUrl);
+      setManualUrl(publicUrlData.publicUrl);
+      onAssetSelect(publicUrlData.publicUrl);
+      setActiveTab("url");
+      fetchGalleryFiles(); // Refresh galeri setelah upload
     } catch (error: any) {
-      toast.error(`Upload gagal: ${error.message}`);
+      toast.error(`Upload gagal: ${error.message}`, { id: loadingToastId });
       console.error("Upload error:", error.message);
     } finally {
       setUploading(false);
-      toast.dismiss();
+      setUploadProgress(0);
       if (fileInputRef.current) {
-        fileInputRef.current.value = ""; // Reset input file
+        fileInputRef.current.value = "";
       }
     }
   };
@@ -175,9 +205,9 @@ export function AssetManager({
   ) => {
     const url = event.target.value;
     setManualUrl(url);
-    setSelectedFile(null); // Clear selected file
-    setPreviewUrl(url || null); // Set preview to manual URL
-    onAssetSelect(url || null); // Pass URL immediately
+    setSelectedFile(null);
+    setPreviewUrl(url || null);
+    onAssetSelect(url || null);
   };
 
   // --- Select from Gallery Logic ---
@@ -187,7 +217,7 @@ export function AssetManager({
       setPreviewUrl(file.publicUrl);
       setSelectedFile(null);
       onAssetSelect(file.publicUrl);
-      setActiveTab("url"); // Pindah ke tab URL setelah memilih dari galeri
+      setActiveTab("url");
     } else {
       toast.error("URL publik aset tidak ditemukan.");
     }
@@ -200,8 +230,8 @@ export function AssetManager({
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
-    onAssetSelect(null); // Kirim null ke parent untuk menghapus aset
-    setActiveTab("upload"); // Kembali ke tab upload
+    onAssetSelect(null);
+    setActiveTab("upload");
   };
 
   return (
@@ -210,6 +240,7 @@ export function AssetManager({
       {(initialAssetUrl || previewUrl || manualUrl) && (
         <div className="flex justify-end mb-4">
           <button
+            type="button" // PENTING: type="button"
             onClick={handleRemoveSelectedAsset}
             className="text-red-500 hover:text-red-700 flex items-center text-sm font-body"
           >
@@ -221,6 +252,7 @@ export function AssetManager({
       {/* Tabs */}
       <div className="flex border-b border-warm-brown mb-4">
         <button
+          type="button" // PENTING: type="button"
           onClick={() => setActiveTab("upload")}
           className={`px-4 py-2 font-body text-sm ${
             activeTab === "upload"
@@ -231,6 +263,7 @@ export function AssetManager({
           Upload Baru
         </button>
         <button
+          type="button" // PENTING: type="button"
           onClick={() => setActiveTab("gallery")}
           className={`px-4 py-2 font-body text-sm ${
             activeTab === "gallery"
@@ -241,6 +274,7 @@ export function AssetManager({
           Pilih dari Galeri
         </button>
         <button
+          type="button" // PENTING: type="button"
           onClick={() => setActiveTab("url")}
           className={`px-4 py-2 font-body text-sm ${
             activeTab === "url"
@@ -254,8 +288,6 @@ export function AssetManager({
 
       {/* Konten Tabs */}
       <div className="min-h-[150px]">
-        {" "}
-        {/* Min-height agar tidak terlalu pendek */}
         {/* Tab: Upload Baru */}
         {activeTab === "upload" && (
           <div className="space-y-4">
@@ -274,15 +306,35 @@ export function AssetManager({
               className="w-full text-deep-mocha text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-clay-pink file:text-deep-mocha hover:file:bg-warm-brown hover:file:text-light-cream file:transition-colors file:duration-200"
               disabled={uploading}
             />
+            {uploading && (
+              <div className="mt-2">
+                <Progress
+                  value={uploadProgress}
+                  className="w-full bg-warm-brown"
+                />
+                <p className="text-xs text-warm-brown text-center mt-1">
+                  {uploadProgress}%
+                </p>
+              </div>
+            )}
             <button
+              type="button" // PENTING: type="button"
               onClick={handleUpload}
               disabled={!selectedFile || uploading}
-              className="mt-4 px-6 py-2 bg-deep-mocha text-light-cream rounded-md font-body hover:bg-clay-pink hover:text-deep-mocha transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="mt-4 px-6 py-2 bg-deep-mocha text-light-cream rounded-md font-body hover:bg-clay-pink hover:text-deep-mocha transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
-              {uploading ? "Mengupload..." : "Upload File"}
+              {uploading ? (
+                <>
+                  <span className="animate-spin h-5 w-5 mr-3 border-b-2 border-light-cream rounded-full"></span>
+                  Mengupload...
+                </>
+              ) : (
+                "Upload File"
+              )}
             </button>
           </div>
         )}
+
         {/* Tab: Pilih dari Galeri */}
         {activeTab === "gallery" && (
           <div className="space-y-4">
@@ -291,6 +343,7 @@ export function AssetManager({
                 galeri aset
               </h3>
               <button
+                type="button" // PENTING: type="button"
                 onClick={fetchGalleryFiles}
                 className="flex items-center text-sm text-deep-mocha hover:text-warm-brown"
                 disabled={loadingGallery}
@@ -311,8 +364,6 @@ export function AssetManager({
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-h-80 overflow-y-auto pr-2">
-                {" "}
-                {/* Scrollable gallery */}
                 {galleryFiles.map((file) => (
                   <div
                     key={file.id}
@@ -320,7 +371,7 @@ export function AssetManager({
                     className="relative aspect-square w-full rounded-md overflow-hidden border border-warm-brown cursor-pointer hover:border-deep-mocha hover:shadow-md transition-all group"
                   >
                     {file.publicUrl &&
-                    file.metadata.mimetype?.startsWith("image/") ? (
+                    file.metadata?.mimetype?.startsWith("image/") ? (
                       <Image
                         src={file.publicUrl}
                         alt={file.name}
@@ -330,10 +381,10 @@ export function AssetManager({
                         className="group-hover:scale-105 transition-transform"
                       />
                     ) : file.publicUrl &&
-                      file.metadata.mimetype?.startsWith("audio/") ? (
-                      <div className="absolute inset-0 flex items-center justify-center bg-clay-pink/50 text-deep-mocha">
-                        <PlayCircleIcon className="h-10 w-10" />
-                        <span className="text-xs text-center break-words p-1">
+                      file.metadata?.mimetype?.startsWith("audio/") ? (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-clay-pink/50 text-deep-mocha p-2 text-center">
+                        <PlayCircleIcon className="h-10 w-10 mb-1" />
+                        <span className="text-xs text-center break-words">
                           {file.name}
                         </span>
                       </div>
@@ -342,7 +393,7 @@ export function AssetManager({
                         No Preview
                       </div>
                     )}
-                    <div className="absolute bottom-0 left-0 right-0 bg-deep-mocha bg-opacity-70 text-light-cream text-xs p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="absolute bottom-0 left-0 right-0 bg-deep-mocha bg-opacity-70 text-light-cream text-xs p-1 opacity-0 group-hover:opacity-100 transition-opacity truncate">
                       {file.name}
                     </div>
                   </div>
@@ -351,6 +402,7 @@ export function AssetManager({
             )}
           </div>
         )}
+
         {/* Tab: URL Eksternal */}
         {activeTab === "url" && (
           <div className="space-y-4">
@@ -388,7 +440,7 @@ export function AssetManager({
                 style={{ objectFit: "cover" }}
                 sizes="192px"
               />
-            ) : previewUrl.match(/\.(mp3|wav|ogg)$/i) ? ( // Tambahkan jenis audio
+            ) : previewUrl.match(/\.(mp3|wav|ogg)$/i) ? (
               <div className="flex flex-col items-center justify-center h-full w-full bg-clay-pink text-deep-mocha p-2">
                 <PlayCircleIcon className="h-12 w-12 mb-2" />
                 <span className="text-sm font-body text-center break-words">
