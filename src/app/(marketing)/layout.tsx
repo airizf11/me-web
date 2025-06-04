@@ -1,6 +1,6 @@
 // src/app/(marketing)/layout.tsx
-import { Navbar } from "@/components/Navbar"; // Belum dibuat, akan dibuat nanti
-import { Footer } from "@/components/Footer"; // Belum dibuat, akan dibuat nanti
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 
 export default function MarketingLayout({
   children,

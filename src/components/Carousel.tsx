@@ -14,7 +14,7 @@ import "swiper/css/navigation";
 import { Link } from "lucide-react";
 
 const DEFAULT_IMAGE_PLACEHOLDER =
-  "https://placehold.co/1200x900/000000/FFFFFF/png";
+  "https://xohcrdpzaxbcfzkxkqju.supabase.co/storage/v1/object/public/assets/public/slides00.jpg";
 
 export function Carousel() {
   const [slides, setSlides] = useState<CarouselSlide[]>([]);
@@ -114,29 +114,27 @@ export function Carousel() {
           spaceBetween={30}
           centeredSlides={true}
           autoplay={{
-            delay: 5000, // Geser otomatis setiap 5 detik
-            disableOnInteraction: false, // Lanjutkan autoplay setelah user berinteraksi
+            delay: 5000,
+            disableOnInteraction: false,
           }}
           pagination={{
-            clickable: true, // Dots bisa diklik
+            clickable: true,
           }}
-          navigation={true} // Panah navigasi
+          navigation={true}
           modules={[Autoplay, Pagination, Navigation]}
-          className="mySwiper w-full h-full" // Swiper harus mengisi parent yang memiliki ukuran
+          className="mySwiper w-full h-full"
         >
           {slides.map((slide) => (
             <SwiperSlide key={slide.id}>
               <div className="relative w-full h-full">
-                {/* Image background */}
                 <Image
                   src={slide.image_url || DEFAULT_IMAGE_PLACEHOLDER}
                   alt={slide.alt_text || "Carousel slide background"}
-                  fill // Mengisi area parent
-                  style={{ objectFit: "cover" }} // Memastikan gambar menutupi area tanpa terdistorsi
-                  priority // Muat gambar ini lebih awal
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Optimasi responsif
+                  fill
+                  style={{ objectFit: "cover" }}
+                  priority
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
-                {/* Overlay (untuk teks agar mudah dibaca) */}
                 <div className="absolute inset-0 bg-deep-mocha bg-opacity-40 flex flex-col justify-center items-center p-8 text-center text-light-cream">
                   <h2 className="text-4xl md:text-5xl font-display lowercase mb-4 leading-tight">
                     {slide.headline}

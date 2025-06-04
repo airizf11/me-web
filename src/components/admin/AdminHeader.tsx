@@ -47,7 +47,7 @@ export function AdminHeader({ onOpenSidebar }: AdminHeaderProps) {
           href="/mudir"
           className="text-2xl font-display lowercase hover:text-warm-brown transition-colors leading-none flex-grow text-center md:text-left md:flex-grow-0"
         >
-          menurutmu mudir
+          menurutmu Admin
         </Link>
 
         <div className="flex items-center space-x-4">

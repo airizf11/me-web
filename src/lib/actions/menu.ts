@@ -8,7 +8,6 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { z } from "zod";
 import { type MenuItem } from "@/lib/types";
 
-// Definisi skema validasi yang diperbarui untuk input menu
 const MenuItemSchema = z.object({
   id: z.string().uuid().optional(),
   name: z
@@ -37,10 +36,9 @@ const MenuItemSchema = z.object({
     .number()
     .int()
     .min(0, "Order index harus berupa bilangan bulat positif.")
-    .default(0), // Diperbarui
+    .default(0),
 });
 
-// Helper function untuk Upload Gambar ke Supabase Storage
 async function uploadImageToSupabase(
   file: File,
   supabaseClient: any
@@ -78,7 +76,6 @@ async function uploadImageToSupabase(
   }
 }
 
-// --- CREATE MENU ---
 export async function createMenuItem(formData: FormData) {
   const supabase = await createServerSupabaseClient();
 
@@ -89,9 +86,8 @@ export async function createMenuItem(formData: FormData) {
   const category = formData.get("category") as string;
   const isAvailable = formData.get("is_available") === "on";
   const imageUrl = formData.get("image_url") as string | null;
-  const orderIndex = parseInt(formData.get("order_index") as string); // Ambil order_index
+  const orderIndex = parseInt(formData.get("order_index") as string);
 
-  // Validasi input
   const validatedFields = MenuItemSchema.safeParse({
     name,
     slug,
@@ -100,7 +96,7 @@ export async function createMenuItem(formData: FormData) {
     image_url: imageUrl || null,
     category,
     is_available: isAvailable,
-    order_index: orderIndex, // Sertakan order_index
+    order_index: orderIndex,
   });
 
   if (!validatedFields.success) {
@@ -115,7 +111,6 @@ export async function createMenuItem(formData: FormData) {
     };
   }
 
-  // Cek apakah slug sudah ada
   const { data: existingSlug, error: slugCheckError } = await supabase
     .from("menus")
     .select("id")
@@ -154,7 +149,6 @@ export async function createMenuItem(formData: FormData) {
   };
 }
 
-// --- UPDATE MENU ---
 export async function updateMenuItem(id: string, formData: FormData) {
   const supabase = await createServerSupabaseClient();
 
@@ -167,7 +161,6 @@ export async function updateMenuItem(id: string, formData: FormData) {
   const imageUrl = formData.get("image_url") as string | null;
   const orderIndex = parseInt(formData.get("order_index") as string); // Ambil order_index
 
-  // Validasi input
   const validatedFields = MenuItemSchema.safeParse({
     id,
     name,
@@ -177,7 +170,7 @@ export async function updateMenuItem(id: string, formData: FormData) {
     image_url: imageUrl || null,
     category,
     is_available: isAvailable,
-    order_index: orderIndex, // Sertakan order_index
+    order_index: orderIndex,
   });
 
   if (!validatedFields.success) {
@@ -192,7 +185,6 @@ export async function updateMenuItem(id: string, formData: FormData) {
     };
   }
 
-  // Cek apakah slug sudah ada dan bukan milik item yang sedang diedit
   const { data: existingSlug, error: slugCheckError } = await supabase
     .from("menus")
     .select("id")
@@ -237,21 +229,8 @@ export async function updateMenuItem(id: string, formData: FormData) {
   };
 }
 
-// ... DELETE MENU dan TOGGLE AVAILABILITY tetap sama seperti sebelumnya ...
 export async function deleteMenuItem(id: string) {
   const supabase = await createServerSupabaseClient();
-
-  // Opsional: Hapus gambar dari Supabase Storage jika ada
-  // Anda bisa menambahkan logika di sini untuk menghapus file dari bucket 'assets'
-  // if (menuItemToDelete?.image_url && menuItemToDelete.image_url.includes(process.env.NEXT_PUBLIC_SUPABASE_URL!)) {
-  //   const filePath = menuItemToDelete.image_url.split('/').pop();
-  //   if (filePath) {
-  //     const { error: deleteStorageError } = await supabase.storage.from('assets').remove([`public/${filePath}`]);
-  //     if (deleteStorageError) {
-  //       console.error('Error deleting image from storage:', deleteStorageError.message);
-  //     }
-  //   }
-  // }
 
   const { error } = await supabase.from("menus").delete().eq("id", id);
 

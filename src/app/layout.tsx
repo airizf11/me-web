@@ -14,17 +14,16 @@ const workSans = Work_Sans({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-body",
-  weight: ["300", "400", "500", "600", "700"], // Berat font yang akan digunakan
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 const josefinSans = Josefin_Sans({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-display", // Menghubungkan ke variabel CSS --font-display
-  weight: ["300", "400", "500", "600", "700"], // Berat font yang akan digunakan
+  variable: "--font-display",
+  weight: ["300", "400", "500", "600", "700"],
 });
 
-// Metadata untuk SEO
 export const metadata: Metadata = {
   title: "menurutmu - Bagaimana hari ini?",
   description: "Brand minuman reflektif yang mengajak berpikir dan berdialog.",

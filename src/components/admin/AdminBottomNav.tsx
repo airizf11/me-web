@@ -13,7 +13,7 @@ const bottomNavItems = [
   { name: "Dashboard", href: "/mudir", icon: HomeIcon },
   { name: "Menus", href: "/mudir/menus", icon: ListBulletIcon },
   { name: "Carousel", href: "/mudir/carousel", icon: PhotoIcon },
-  // Tambah link lain (misal: 'Users', 'Settings')
+  // Tambah link lain (misal 'Settings')
 ];
 
 export function AdminBottomNav() {

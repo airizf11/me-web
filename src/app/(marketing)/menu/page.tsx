@@ -1,19 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // src/app/(marketing)/menu/page.tsx
-"use client"; // Wajib karena ada fetching data dan state
+"use client";
 
-// import { Metadata } from "next"; // Metadata masih bisa diimport di Client Component
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { type MenuItem } from "@/lib/types"; // Import tipe MenuItem
-import { MenuItemCard } from "@/components/MenuItemCard"; // Import komponen MenuItemCard
-
-{
-  /* export const metadata: Metadata = {
-  title: "Menu Menurutmu - Temukan Pilihanmu",
-  description: "Daftar menu kopi dan minuman reflektif dari Menurutmu.",
-}; */
-}
+import { type MenuItem } from "@/lib/types";
+import { MenuItemCard } from "@/components/MenuItemCard";
 
 export default function MenuPage() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
@@ -27,15 +19,14 @@ export default function MenuPage() {
         const { data, error } = await supabase
           .from("menus")
           .select("*")
-          .eq("is_available", true) // Hanya tampilkan menu yang tersedia
-          .order("order_index", { ascending: true }) // Urutkan berdasarkan order_index
-          .order("name", { ascending: true }); // Kemudian berdasarkan nama
+          .eq("is_available", true)
+          .order("order_index", { ascending: true })
+          .order("name", { ascending: true });
 
         if (error) {
           throw error;
         }
 
-        // Jika tidak ada data, gunakan dummy data sementara
         if (!data || data.length === 0) {
           setMenuItems([
             {
@@ -110,7 +101,6 @@ export default function MenuPage() {
       } catch (err: any) {
         console.error("Error fetching menu items:", err.message);
         setError("Gagal memuat daftar menu. Silakan coba lagi nanti.");
-        // Fallback ke dummy data jika ada error
         setMenuItems([
           {
             id: "error-dummy",
@@ -167,14 +157,13 @@ export default function MenuPage() {
         ))}
       </div>
 
-      {/* CTA Order di bagian bawah menu */}
       <div className="mt-16 text-center">
         <h2 className="text-2xl font-display text-deep-mocha mb-6 lowercase">
           siap memesan?
         </h2>
         <div className="flex flex-wrap justify-center gap-4">
           <a
-            href="#" // Ganti dengan link WhatsApp Bisnis Anda
+            href="#"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-deep-mocha text-light-cream px-8 py-3 rounded-full hover:bg-warm-brown transition-colors duration-300 font-body text-lg"
@@ -182,7 +171,7 @@ export default function MenuPage() {
             Order via WhatsApp
           </a>
           <a
-            href="#" // Ganti dengan link GoFood Anda
+            href="#"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-deep-mocha text-light-cream px-8 py-3 rounded-full hover:bg-warm-brown transition-colors duration-300 font-body text-lg"
@@ -190,7 +179,7 @@ export default function MenuPage() {
             Order via GoFood
           </a>
           <a
-            href="#" // Ganti dengan link GrabFood Anda
+            href="#"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-deep-mocha text-light-cream px-8 py-3 rounded-full hover:bg-warm-brown transition-colors duration-300 font-body text-lg"
@@ -198,7 +187,7 @@ export default function MenuPage() {
             Order via GrabFood
           </a>
           <a
-            href="#" // Ganti dengan link ShopeeFood Anda
+            href="#"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-deep-mocha text-light-cream px-8 py-3 rounded-full hover:bg-warm-brown transition-colors duration-300 font-body text-lg"

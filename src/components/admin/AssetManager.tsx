@@ -16,7 +16,7 @@ import {
   MagnifyingGlassIcon,
   ArrowPathIcon,
 } from "@heroicons/react/24/outline";
-import { Progress } from "@/components/ui/progress"; // Pastikan file ini ada
+import { Progress } from "@/components/ui/progress";
 
 interface SupabaseFile {
   name: string;
@@ -73,12 +73,9 @@ export function AssetManager({
     setLoadingGallery(true);
     setGalleryFiles([]);
     try {
-      // Supabase storage list() does not return public URLs directly.
-      // We need to fetch and then get public URL for each.
       const { data, error } = await supabase.storage
         .from(bucketName)
         .list("public", {
-          // list from 'public' folder
           limit: 100,
           offset: 0,
           sortBy: { column: "created_at", order: "desc" },
@@ -89,9 +86,6 @@ export function AssetManager({
       const filesWithUrls: SupabaseFile[] = data
         .filter((item) => item.id !== ".emptyFolderPlaceholder")
         .map((file) => {
-          // IMPORTANT: Check for publicUrl existence and potential errors
-          // The public URL can only be retrieved if the file is in a public bucket
-          // or if the RLS allows public access.
           const { data: publicUrlData } = supabase.storage
             .from(bucketName)
             .getPublicUrl(`public/${file.name}`);
@@ -117,7 +111,6 @@ export function AssetManager({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
-  // --- Upload Logic ---
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
     setSelectedFile(file);
@@ -145,14 +138,12 @@ export function AssetManager({
     setUploadProgress(0);
     const loadingToastId = toast.loading("Mengupload file...");
 
-    // PENTING: Gunakan pendekatan nama file yang lebih universal dan aman
-    // Menggunakan timestamp + random string + nama asli untuk unik
     const fileExtension = selectedFile.name.split(".").pop();
-    const uniqueId = Math.random().toString(36).substring(2, 8); // Random string
+    const uniqueId = Math.random().toString(36).substring(2, 8);
     const fileName = `${Date.now()}-${uniqueId}-${selectedFile.name.replace(
       /\s/g,
       "-"
-    )}`; // Lebih robust
+    )}`;
     const filePath = `public/${fileName}`;
 
     try {
@@ -161,8 +152,8 @@ export function AssetManager({
         .upload(filePath, selectedFile, {
           cacheControl: "3600",
           upsert: false,
-          // Ini adalah opsional jika Anda ingin progress bar real-time
-          // namun membutuhkan custom upload endpoint atau streaming.
+          // opsional progress bar real-time
+          // namun butuh custom upload endpoint/streaming.
           // onUploadProgress: (event) => {
           //   if (event.lengthComputable) {
           //     const percentCompleted = Math.round((event.loaded * 100) / event.total);
@@ -186,7 +177,7 @@ export function AssetManager({
       setManualUrl(publicUrlData.publicUrl);
       onAssetSelect(publicUrlData.publicUrl);
       setActiveTab("url");
-      fetchGalleryFiles(); // Refresh galeri setelah upload
+      fetchGalleryFiles();
     } catch (error: any) {
       toast.error(`Upload gagal: ${error.message}`, { id: loadingToastId });
       console.error("Upload error:", error.message);
@@ -199,7 +190,6 @@ export function AssetManager({
     }
   };
 
-  // --- Manual URL Logic ---
   const handleManualUrlChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -210,7 +200,6 @@ export function AssetManager({
     onAssetSelect(url || null);
   };
 
-  // --- Select from Gallery Logic ---
   const handleSelectFromGallery = (file: SupabaseFile) => {
     if (file.publicUrl) {
       setManualUrl(file.publicUrl);
@@ -236,11 +225,10 @@ export function AssetManager({
 
   return (
     <div className="border border-warm-brown rounded-lg p-4 bg-light-cream">
-      {/* Tombol Remove Aset */}
       {(initialAssetUrl || previewUrl || manualUrl) && (
         <div className="flex justify-end mb-4">
           <button
-            type="button" // PENTING: type="button"
+            type="button"
             onClick={handleRemoveSelectedAsset}
             className="text-red-500 hover:text-red-700 flex items-center text-sm font-body"
           >
@@ -249,10 +237,9 @@ export function AssetManager({
         </div>
       )}
 
-      {/* Tabs */}
       <div className="flex border-b border-warm-brown mb-4">
         <button
-          type="button" // PENTING: type="button"
+          type="button"
           onClick={() => setActiveTab("upload")}
           className={`px-4 py-2 font-body text-sm ${
             activeTab === "upload"
@@ -263,7 +250,7 @@ export function AssetManager({
           Upload Baru
         </button>
         <button
-          type="button" // PENTING: type="button"
+          type="button"
           onClick={() => setActiveTab("gallery")}
           className={`px-4 py-2 font-body text-sm ${
             activeTab === "gallery"
@@ -274,7 +261,7 @@ export function AssetManager({
           Pilih dari Galeri
         </button>
         <button
-          type="button" // PENTING: type="button"
+          type="button"
           onClick={() => setActiveTab("url")}
           className={`px-4 py-2 font-body text-sm ${
             activeTab === "url"
@@ -286,9 +273,7 @@ export function AssetManager({
         </button>
       </div>
 
-      {/* Konten Tabs */}
       <div className="min-h-[150px]">
-        {/* Tab: Upload Baru */}
         {activeTab === "upload" && (
           <div className="space-y-4">
             <label
@@ -318,7 +303,7 @@ export function AssetManager({
               </div>
             )}
             <button
-              type="button" // PENTING: type="button"
+              type="button"
               onClick={handleUpload}
               disabled={!selectedFile || uploading}
               className="mt-4 px-6 py-2 bg-deep-mocha text-light-cream rounded-md font-body hover:bg-clay-pink hover:text-deep-mocha transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
@@ -335,7 +320,6 @@ export function AssetManager({
           </div>
         )}
 
-        {/* Tab: Pilih dari Galeri */}
         {activeTab === "gallery" && (
           <div className="space-y-4">
             <div className="flex justify-between items-center mb-4">
@@ -343,7 +327,7 @@ export function AssetManager({
                 galeri aset
               </h3>
               <button
-                type="button" // PENTING: type="button"
+                type="button"
                 onClick={fetchGalleryFiles}
                 className="flex items-center text-sm text-deep-mocha hover:text-warm-brown"
                 disabled={loadingGallery}
@@ -403,7 +387,6 @@ export function AssetManager({
           </div>
         )}
 
-        {/* Tab: URL Eksternal */}
         {activeTab === "url" && (
           <div className="space-y-4">
             <label
@@ -425,7 +408,6 @@ export function AssetManager({
         )}
       </div>
 
-      {/* Pratinjau Aset yang Sedang Dipilih */}
       {previewUrl && (
         <div className="mt-6 border-t border-warm-brown pt-6">
           <h3 className="text-lg font-display lowercase text-deep-mocha mb-3">
@@ -440,7 +422,7 @@ export function AssetManager({
                 style={{ objectFit: "cover" }}
                 sizes="192px"
               />
-            ) : previewUrl.match(/\.(mp3|wav|ogg)$/i) ? (
+            ) : previewUrl.match(/\.(mp3|wav|ogg|aac|m4a)$/i) ? (
               <div className="flex flex-col items-center justify-center h-full w-full bg-clay-pink text-deep-mocha p-2">
                 <PlayCircleIcon className="h-12 w-12 mb-2" />
                 <span className="text-sm font-body text-center break-words">

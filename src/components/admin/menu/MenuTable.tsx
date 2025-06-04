@@ -2,7 +2,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link"; // Import Link
+import Link from "next/link";
 import { type MenuItem } from "@/lib/types";
 import {
   PencilIcon,
@@ -18,7 +18,6 @@ type MenuTableProps = {
 };
 
 export function MenuTable({ items }: MenuTableProps) {
-  // Hapus onEdit dari props
   const handleDelete = async (item: MenuItem) => {
     if (
       confirm(
@@ -140,7 +139,6 @@ export function MenuTable({ items }: MenuTableProps) {
                       <EyeSlashIcon className="h-5 w-5" />
                     )}
                   </button>
-                  {/* Gunakan Link untuk tombol edit */}
                   <Link
                     href={`/mudir/menus/${item.id}/edit`}
                     className="p-2 rounded-full text-deep-mocha hover:bg-clay-pink transition-colors"

@@ -1,17 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // src/app/mudir/menus/page.tsx
 import { Metadata } from "next";
-import Link from "next/link"; // Import Link dari next/link
+import Link from "next/link";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { type MenuItem } from "@/lib/types";
-import { MenuTable } from "@/components/admin/menu/MenuTable"; // MenuTable tetap Client Component
+import { MenuTable } from "@/components/admin/menu/MenuTable";
 
 export const metadata: Metadata = {
   title: "Manajemen Menu - Mudir Menurutmu",
   description: "Kelola daftar menu minuman Menurutmu.",
 };
 
-// Komponen ini akan menjadi Server Component
 export default async function MenusManagementPage() {
   const supabase = await createServerSupabaseClient();
 
@@ -40,7 +39,6 @@ export default async function MenusManagementPage() {
         manajemen menu
       </h1>
 
-      {/* Tombol Tambah Menu Baru yang mengarah ke halaman /mudir/menus/create */}
       <div className="flex justify-end mb-6">
         <Link
           href="/mudir/menus/create"
@@ -50,10 +48,9 @@ export default async function MenusManagementPage() {
         </Link>
       </div>
 
-      {/* Bagian Daftar Menu */}
       <div className="bg-light-cream p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-2xl font-display lowercase text-deep-mocha mb-4">
-          daftar menu
+          Daftar Menu
         </h2>
         {error ? (
           <div className="bg-red-100 border border-red-400 text-red-700 p-4 rounded-lg">
@@ -64,7 +61,6 @@ export default async function MenusManagementPage() {
             Belum ada menu yang ditambahkan.
           </div>
         ) : (
-          // MenuTable adalah Client Component, menerima data sebagai prop
           <MenuTable items={menuItems} />
         )}
       </div>

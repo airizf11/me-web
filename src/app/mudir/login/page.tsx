@@ -6,22 +6,16 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import toast from "react-hot-toast";
 
-// export const metadata: Metadata = { // Metadata ini akan dihandle oleh parent layout
-//   title: "Login Mudir - Menurutmu Admin",
-//   description: "Halaman login untuk panel administrasi Menurutmu.",
-// };
-
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const searchParams = useSearchParams(); // Hook yang menyebabkan masalah ini
+  const searchParams = useSearchParams();
   const supabase = createClient();
 
-  // Ambil URL tujuan setelah login berhasil
   const redirectedFrom = searchParams.get("redirectedFrom") || "/mudir";
-  const message = searchParams.get("message"); // Untuk pesan error dari middleware
+  const message = searchParams.get("message");
 
   useEffect(() => {
     if (message) {

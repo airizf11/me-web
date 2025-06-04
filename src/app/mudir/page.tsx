@@ -2,16 +2,8 @@
 // src/app/mudir/page.tsx
 "use client";
 
-//import { Metadata } from "next";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-
-{
-  /* export const metadata: Metadata = {
-  title: "Dashboard - Mudir Menurutmu",
-  description: "Ringkasan dan statistik utama untuk admin Menurutmu.",
-}; */
-}
 
 export default function MudirDashboardPage() {
   const [menuCount, setMenuCount] = useState<number | null>(null);
@@ -23,21 +15,19 @@ export default function MudirDashboardPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        // Fetch Menu Count
         const { count: menuDataCount, error: menuError } = await supabase
           .from("menus")
-          .select("*", { count: "exact", head: true }) // count: 'exact' untuk mendapatkan jumlah total
-          .eq("is_available", true); // Hanya hitung yang aktif
+          .select("*", { count: "exact", head: true })
+          .eq("is_available", true);
 
         if (menuError) throw menuError;
         setMenuCount(menuDataCount);
 
-        // Fetch Carousel Slides Count
         const { count: carouselDataCount, error: carouselError } =
           await supabase
             .from("carousel_slides")
             .select("*", { count: "exact", head: true })
-            .eq("is_active", true); // Hanya hitung yang aktif
+            .eq("is_active", true);
 
         if (carouselError) throw carouselError;
         setCarouselCount(carouselDataCount);
@@ -56,7 +46,7 @@ export default function MudirDashboardPage() {
   return (
     <div className="flex flex-col items-center justify-center h-full">
       <h1 className="text-4xl font-display lowercase text-deep-mocha mb-8">
-        selamat datang, mudir!
+        selamat datang, Admin!
       </h1>
       <p className="text-lg font-body text-warm-brown mb-12 text-center">
         Ini adalah panel kontrol Anda. Pilih menu di sidebar untuk mulai
@@ -87,8 +77,7 @@ export default function MudirDashboardPage() {
             <h3 className="text-xl font-display lowercase mb-2">
               feedback terbaru
             </h3>
-            <p className="text-lg font-body">Belum ada</p>{" "}
-            {/* Tetap placeholder karena tabel quotes belum ada */}
+            <p className="text-lg font-body">Belum ada</p> {/* placeholder */}
             <p className="text-sm">dari konsumen</p>
           </div>
         </div>

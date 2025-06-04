@@ -2,17 +2,9 @@
 "use client";
 
 import { useState, Suspense } from "react";
-//import type { Metadata } from "next";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminBottomNav } from "@/components/admin/AdminBottomNav";
-
-{
-  /* export const metadata: Metadata = {
-  title: "Mudir Dashboard - Menurutmu Admin",
-  description: "Panel administrasi untuk mengelola konten dan operasional Menurutmu.",
-}; */
-}
 
 export default function MudirLayout({
   children,
@@ -31,7 +23,6 @@ export default function MudirLayout({
       <div className="flex flex-col min-h-screen md:pl-64">
         <AdminHeader onOpenSidebar={() => setIsSidebarOpen(true)} />
 
-        {/* Bungkus children dengan Suspense */}
         <main className="flex-grow p-4 md:p-8 pb-20 md:pb-8 bg-light-cream">
           <Suspense
             fallback={

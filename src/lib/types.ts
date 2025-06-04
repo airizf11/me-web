@@ -4,13 +4,13 @@ export type MenuItem = {
   name: string;
   slug: string;
   description: string;
-  price: number; // Menggunakan number karena dari database numeric
-  image_url: string | null; // Bisa null jika tidak ada gambar
+  price: number;
+  image_url: string | null;
   category: string;
   is_available: boolean;
   order_index: number;
-  created_at: string; // ISO string
-  updated_at: string; // ISO string
+  created_at: string;
+  updated_at: string;
 };
 
 export type CarouselSlide = {
@@ -18,9 +18,9 @@ export type CarouselSlide = {
   image_url: string;
   alt_text: string;
   headline: string;
-  body_text: string | null; // Bisa null jika tidak ada body text
-  button_text: string | null; // Bisa null jika tidak ada tombol
-  button_link: string | null; // Bisa null jika tidak ada tombol
+  body_text: string | null;
+  button_text: string | null;
+  button_link: string | null;
   order_index: number;
   is_active: boolean;
   created_at: string;

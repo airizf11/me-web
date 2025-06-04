@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  Cog6ToothIcon,
   HomeIcon,
   ListBulletIcon,
   PhotoIcon,
@@ -16,9 +17,8 @@ const adminNavItems = [
   { name: "Dashboard", href: "/mudir", icon: HomeIcon },
   { name: "Manajemen Menu", href: "/mudir/menus", icon: ListBulletIcon },
   { name: "Manajemen Carousel", href: "/mudir/carousel", icon: PhotoIcon },
-  // Tambahkan link lain di sini
-  // { name: 'Manajemen Pengguna', href: '/mudir/users', icon: UsersIcon },
-  // { name: 'Pengaturan', href: '/mudir/settings', icon: Cog6ToothIcon },
+  // Tambah link lain
+  { name: "Pengaturan", href: "/mudir/settings", icon: Cog6ToothIcon },
 ];
 
 type AdminSidebarProps = {
@@ -56,7 +56,6 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
               leaveTo="-translate-x-full"
             >
               <Dialog.Panel className="relative mr-16 flex w-full max-w-xs flex-1">
-                {/* Tombol Tutup */}
                 <Transition.Child
                   as={Fragment}
                   enter="ease-in-out duration-300"
@@ -87,7 +86,7 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                       href="/mudir"
                       className="text-3xl font-display lowercase leading-none text-light-cream"
                     >
-                      menurutmu mudir
+                      menurutmu Admin
                     </Link>
                   </div>
                   <nav className="flex flex-1 flex-col">
@@ -96,12 +95,12 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                         const isActive =
                           pathname === item.href ||
                           (pathname.startsWith(item.href) &&
-                            item.href !== "/mudir"); // Handle active sub-path
+                            item.href !== "/mudir");
                         return (
                           <li key={item.name}>
                             <Link
                               href={item.href}
-                              onClick={onClose} // Tutup sidebar saat link diklik
+                              onClick={onClose}
                               className={`
                                 group flex gap-x-3 rounded-md p-2 text-sm font-body leading-6 
                                 ${
@@ -136,7 +135,7 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
               href="/mudir"
               className="text-3xl font-display lowercase leading-none text-light-cream"
             >
-              menurutmu mudir
+              menurutmu Admin
             </Link>
           </div>
           <nav className="flex flex-1 flex-col">

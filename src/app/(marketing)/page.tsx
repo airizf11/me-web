@@ -4,12 +4,7 @@
 import { Metadata } from "next";
 import { Carousel } from "@/components/Carousel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faWhatsapp,
-  faShopify,
-  faGrav, // Perlu diinstal jika belum, atau gunakan alternatif
-  faGooglePlay, // Alternatif untuk GoFood
-} from "@fortawesome/free-brands-svg-icons";
+import { faWhatsapp, faShopify } from "@fortawesome/free-brands-svg-icons";
 import { faStore, faMotorcycle } from "@fortawesome/free-solid-svg-icons";
 
 export const metadata: Metadata = {
@@ -27,7 +22,7 @@ export default function HomePage() {
       <p className="text-xl font-body text-warm-brown max-w-2xl mx-auto mb-8">
         Refleksi di Setiap Tegukan.
         <br />
-        Teman pikiranmu, satu cup, satu makna.
+        Teman pikiranmu, tiap tegukan, penuh makna.
       </p>
 
       <div className="mb-12">
@@ -61,7 +56,7 @@ export default function HomePage() {
             Order via WhatsApp
           </a>
           <a
-            href="#" // Ganti dengan link GoFood Anda
+            href="#"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-deep-mocha text-light-cream px-8 py-3 rounded-full hover:bg-warm-brown transition-colors duration-300 font-body text-lg flex items-center justify-center gap-2"
@@ -70,7 +65,7 @@ export default function HomePage() {
             Order via GoFood
           </a>
           <a
-            href="#" // Ganti dengan link GrabFood Anda
+            href="#"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-deep-mocha text-light-cream px-8 py-3 rounded-full hover:bg-warm-brown transition-colors duration-300 font-body text-lg flex items-center justify-center gap-2"
@@ -79,7 +74,7 @@ export default function HomePage() {
             Order via GrabFood
           </a>
           <a
-            href="#" // Ganti dengan link ShopeeFood Anda
+            href="#"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-deep-mocha text-light-cream px-8 py-3 rounded-full hover:bg-warm-brown transition-colors duration-300 font-body text-lg flex items-center justify-center gap-2"

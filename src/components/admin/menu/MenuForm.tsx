@@ -14,7 +14,7 @@ type MenuFormProps = {
 
 export function MenuForm({ initialData }: MenuFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
-  const [loading, setLoading] = useState(false); // Untuk tombol submit utama
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string[] } | null>(
     null
   );
@@ -33,7 +33,7 @@ export function MenuForm({ initialData }: MenuFormProps) {
   const [isAvailable, setIsAvailable] = useState(
     initialData?.is_available ?? true
   );
-  const [orderIndex, setOrderIndex] = useState(initialData?.order_index || 0); // Tambahkan state orderIndex
+  const [orderIndex, setOrderIndex] = useState(initialData?.order_index || 0);
 
   useEffect(() => {
     setName(initialData?.name || "");
@@ -43,7 +43,7 @@ export function MenuForm({ initialData }: MenuFormProps) {
     setFinalImageUrl(initialData?.image_url || null);
     setCategory(initialData?.category || "Coffee");
     setIsAvailable(initialData?.is_available ?? true);
-    setOrderIndex(initialData?.order_index || 0); // Reset orderIndex
+    setOrderIndex(initialData?.order_index || 0);
     setErrors(null);
   }, [initialData]);
 
@@ -69,7 +69,7 @@ export function MenuForm({ initialData }: MenuFormProps) {
 
     formData.set("slug", slug);
     formData.set("image_url", finalImageUrl || "");
-    formData.set("order_index", orderIndex.toString()); // Tambahkan order_index ke formData
+    formData.set("order_index", orderIndex.toString());
 
     let result;
     if (initialData?.id) {
@@ -182,7 +182,6 @@ export function MenuForm({ initialData }: MenuFormProps) {
         )}
       </div>
 
-      {/* --- Integrasi AssetManager --- */}
       <div className="my-6">
         <label className="block text-sm font-body text-deep-mocha mb-2">
           Gambar Menu
@@ -195,7 +194,6 @@ export function MenuForm({ initialData }: MenuFormProps) {
           fileInputLabel="Pilih gambar untuk menu"
         />
       </div>
-      {/* --- Akhir Integrasi AssetManager --- */}
 
       <div>
         <label
@@ -219,7 +217,6 @@ export function MenuForm({ initialData }: MenuFormProps) {
         )}
       </div>
 
-      {/* Field Order Index */}
       <div>
         <label
           htmlFor="order_index"
@@ -232,7 +229,7 @@ export function MenuForm({ initialData }: MenuFormProps) {
           id="order_index"
           name="order_index"
           value={orderIndex}
-          onChange={(e) => setOrderIndex(parseInt(e.target.value) || 0)} // Parse ke integer
+          onChange={(e) => setOrderIndex(parseInt(e.target.value) || 0)}
           className="w-full p-2 border border-warm-brown rounded-md bg-light-cream text-deep-mocha focus:ring-deep-mocha focus:border-deep-mocha"
           required
           disabled={loading}
