@@ -7,12 +7,14 @@ import {
   HomeIcon,
   ListBulletIcon,
   PhotoIcon,
+  ShoppingCartIcon,
 } from "@heroicons/react/24/outline";
 
 const bottomNavItems = [
   { name: "Dashboard", href: "/mudir", icon: HomeIcon },
   { name: "Menus", href: "/mudir/menus", icon: ListBulletIcon },
   { name: "Carousel", href: "/mudir/carousel", icon: PhotoIcon },
+  { name: "Transaksi", href: "/mudir/transactions", icon: ShoppingCartIcon },
   // Tambah link lain (misal 'Settings')
 ];
 

@@ -8,6 +8,7 @@ import {
   HomeIcon,
   ListBulletIcon,
   PhotoIcon,
+  ShoppingCartIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Dialog, Transition } from "@headlessui/react";
@@ -18,6 +19,11 @@ const adminNavItems = [
   { name: "Manajemen Menu", href: "/mudir/menus", icon: ListBulletIcon },
   { name: "Manajemen Carousel", href: "/mudir/carousel", icon: PhotoIcon },
   // Tambah link lain
+  {
+    name: "Catatan Transaksi",
+    href: "/mudir/transactions",
+    icon: ShoppingCartIcon,
+  },
   { name: "Pengaturan", href: "/mudir/settings", icon: Cog6ToothIcon },
 ];
 

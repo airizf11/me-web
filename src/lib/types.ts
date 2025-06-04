@@ -27,6 +27,36 @@ export type CarouselSlide = {
   updated_at: string;
 };
 
+export type Transaction = {
+  id: string;
+  transaction_timestamp: string;
+  total_amount: number;
+  platform_source: string;
+  notes: string | null;
+  customer_name: string | null;
+  customer_phone: string | null;
+  customer_ig_username: string | null;
+  customer_food_delivery_id: string | null;
+  delivery_city: string | null;
+  delivery_district: string | null;
+  is_delivery: boolean;
+  is_pickup: boolean;
+  screenshot_url: string | null;
+  created_at: string;
+  updated_at: string;
+  items?: TransactionItem[];
+};
+
+export type TransactionItem = {
+  id: string;
+  transaction_id: string;
+  menu_item_id: string;
+  quantity: number;
+  price_at_transaction: number;
+  created_at: string;
+  menu_item?: MenuItem;
+};
+
 export type Quote = {
   id: string;
   text: string;
