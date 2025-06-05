@@ -50,7 +50,7 @@ export default async function TransactionsManagementPage({
     };
 
     const { data, error: fetchError } = await (
-      await import("@/lib/actions/transaction")
+      await import("@/lib/actions/transactions/read")
     ).getTransactions(filters);
 
     if (fetchError) {

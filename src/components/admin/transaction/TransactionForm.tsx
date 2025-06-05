@@ -5,7 +5,7 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { createTransaction } from "@/lib/actions/transaction";
+import { createSalesTransaction } from "@/lib/actions/transactions/sales";
 import { AssetManager } from "@/components/admin/AssetManager";
 import { MenuItemSelector } from "./MenuItemSelector";
 import { type Transaction, type TransactionItem } from "@/lib/types";
@@ -115,7 +115,7 @@ export function TransactionForm({ initialData }: TransactionFormProps) {
       setLoading(false);
       return;
     } else {
-      result = await createTransaction(formData);
+      result = await createSalesTransaction(formData);
     }
 
     if (result.success) {

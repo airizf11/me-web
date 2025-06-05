@@ -3,7 +3,7 @@
 import { Metadata } from "next";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { type Transaction, type TransactionItem } from "@/lib/types";
-import { getTransactionDetails } from "@/lib/actions/transaction"; // Server Action
+import { getTransactionDetails } from "@/lib/actions/transactions/read"; // Server Action
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { Link } from "lucide-react";

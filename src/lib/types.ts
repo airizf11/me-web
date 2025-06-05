@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/lib/types.ts
 export type MenuItem = {
   id: string;
@@ -42,6 +43,9 @@ export type Transaction = {
   is_delivery: boolean;
   is_pickup: boolean;
   screenshot_url: string | null;
+  type: "sale" | "purchase";
+  status: string;
+  purchase_items_json?: any | null;
   created_at: string;
   updated_at: string;
   items?: TransactionItem[];
@@ -55,6 +59,12 @@ export type TransactionItem = {
   price_at_transaction: number;
   created_at: string;
   menu_item?: MenuItem;
+};
+
+export type PurchaseItem = {
+  description: string;
+  quantity: number;
+  unit_price: number;
 };
 
 export type Quote = {

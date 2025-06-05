@@ -5,7 +5,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { useDebounce } from "use-debounce";
-import { getMenuItemsForSelector } from "@/lib/actions/transaction";
+import { getMenuItemsForSelector } from "@/lib/actions/transactions/read";
 import {
   PlusCircleIcon,
   MinusCircleIcon,
