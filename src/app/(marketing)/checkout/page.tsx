@@ -8,10 +8,10 @@ import {
   ShareIcon,
   ChatBubbleBottomCenterTextIcon,
   ArrowLeftIcon,
-} from "@heroicons/react/24/outline"; // Contoh ikon
+} from "@heroicons/react/24/outline";
 
 export const metadata: Metadata = {
-  title: "Checkout Menurutmu - Segera Hadir!",
+  title: "Checkout - menurutmu (Segera Hadir)",
   description:
     "Informasi mengenai fitur pemesanan langsung dari Menurutmu. Sementara, pesan melalui platform favorit Anda.",
 };
@@ -33,10 +33,9 @@ export default function CheckoutPlaceholderPage() {
         Anda melalui platform di bawah ini:
       </p>
 
-      {/* Tombol-tombol CTA ke platform eksternal */}
       <div className="flex flex-wrap justify-center gap-6 mb-12">
         <a
-          href="#" // Ganti dengan link GoFood Anda
+          href="#"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center bg-deep-mocha text-light-cream px-6 py-3 rounded-full hover:bg-warm-brown transition-colors duration-300 font-body text-lg shadow-md"
@@ -44,7 +43,7 @@ export default function CheckoutPlaceholderPage() {
           <ShoppingCartIcon className="h-6 w-6 mr-2" /> Order via GoFood
         </a>
         <a
-          href="#" // Ganti dengan link GrabFood Anda
+          href="#"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center bg-deep-mocha text-light-cream px-6 py-3 rounded-full hover:bg-warm-brown transition-colors duration-300 font-body text-lg shadow-md"
@@ -52,7 +51,7 @@ export default function CheckoutPlaceholderPage() {
           <ShoppingCartIcon className="h-6 w-6 mr-2" /> Order via GrabFood
         </a>
         <a
-          href="#" // Ganti dengan link ShopeeFood Anda
+          href="#"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center bg-deep-mocha text-light-cream px-6 py-3 rounded-full hover:bg-warm-brown transition-colors duration-300 font-body text-lg shadow-md"
@@ -60,7 +59,7 @@ export default function CheckoutPlaceholderPage() {
           <ShoppingCartIcon className="h-6 w-6 mr-2" /> Order via ShopeeFood
         </a>
         <a
-          href="https://wa.me/xxxxxxxxxxxx" // Ganti dengan nomor WhatsApp Bisnis Anda
+          href="https://wa.me/6283113156507"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center bg-warm-brown text-light-cream px-6 py-3 rounded-full hover:bg-deep-mocha transition-colors duration-300 font-body text-lg shadow-md"
@@ -68,9 +67,8 @@ export default function CheckoutPlaceholderPage() {
           <ChatBubbleBottomCenterTextIcon className="h-6 w-6 mr-2" /> Pesan via
           WhatsApp
         </a>
-        {/* Tambahkan link ke Instagram jika relevan untuk DM */}
         <a
-          href="https://www.instagram.com/menurutmu_brand" // Ganti dengan link Instagram Anda
+          href="https://www.instagram.com/me_nurutmu"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center bg-clay-pink text-deep-mocha px-6 py-3 rounded-full hover:bg-warm-brown hover:text-light-cream transition-colors duration-300 font-body text-lg shadow-md"
@@ -79,7 +77,6 @@ export default function CheckoutPlaceholderPage() {
         </a>
       </div>
 
-      {/* Kembali ke Halaman Utama */}
       <Link
         href="/"
         className="text-deep-mocha hover:text-warm-brown transition-colors font-body text-md flex items-center"

@@ -27,7 +27,7 @@ const josefinSans = Josefin_Sans({
 export const metadata: Metadata = {
   title: "menurutmu - Bagaimana hari ini?",
   description: "Brand minuman reflektif yang mengajak berpikir dan berdialog.",
-  // Tambah meta tag SEO lain nanti, seperti og:image, og:url, dll.
+  // Tambah meta tag SEO lain nanti seperti og:image, og:url dll.
 };
 
 export default function RootLayout({

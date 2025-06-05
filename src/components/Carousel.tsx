@@ -4,17 +4,21 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link"; // Import Link
 import { createClient } from "@/lib/supabase/client";
 import { type CarouselSlide } from "@/lib/types";
+
+// Swiper components
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
+
+// Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import { Link } from "lucide-react";
 
 const DEFAULT_IMAGE_PLACEHOLDER =
-  "https://xohcrdpzaxbcfzkxkqju.supabase.co/storage/v1/object/public/assets/public/slides00.jpg";
+  "https://via.placeholder.com/1200x900?text=Menurutmu+Slide";
 
 export function Carousel() {
   const [slides, setSlides] = useState<CarouselSlide[]>([]);
@@ -48,6 +52,8 @@ export function Carousel() {
               button_link: "#",
               order_index: 0,
               is_active: true,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
             },
             {
               id: "2",
@@ -60,6 +66,8 @@ export function Carousel() {
               button_link: "#",
               order_index: 1,
               is_active: true,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
             },
           ] as CarouselSlide[]);
         } else {
@@ -72,14 +80,15 @@ export function Carousel() {
           {
             id: "1",
             image_url: DEFAULT_IMAGE_PLACEHOLDER,
-            alt_text: "Placeholder Error Slide 1",
+            alt_text: "Placeholder Error Slide",
             headline: "Oops! Terjadi Kesalahan",
-            body_text:
-              "Kami sedang memperbaiki ini. Sementara, nikmati suasana.",
+            body_text: "Kami sedang memperbaiki ini.",
             button_text: null,
             button_link: null,
             order_index: 0,
             is_active: true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
           },
         ] as CarouselSlide[]);
       } finally {
@@ -132,22 +141,29 @@ export function Carousel() {
                   alt={slide.alt_text || "Carousel slide background"}
                   fill
                   style={{ objectFit: "cover" }}
-                  priority
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="brightness-[0.9]" // Sama seperti HeroSection, agar gambar tetap terlihat
                 />
-                <div className="absolute inset-0 bg-deep-mocha bg-opacity-40 flex flex-col justify-center items-center p-8 text-center text-light-cream">
-                  <h2 className="text-4xl md:text-5xl font-display lowercase mb-4 leading-tight">
+                {/* PENTING: Perbaikan Overlay Transparan */}
+                <div
+                  className="absolute inset-0 flex flex-col justify-center items-center p-8 text-center"
+                  style={{
+                    backgroundColor: "rgba(109, 76, 65, 0.25)", // deep-mocha dengan opasitas 50%
+                    color: "#EFE9E4", // light-cream untuk teks
+                  }}
+                >
+                  <h2 className="text-4xl md:text-5xl font-display lowercase mb-4 leading-tight drop-shadow">
                     {slide.headline}
                   </h2>
                   {slide.body_text && (
-                    <p className="text-lg md:text-xl font-body max-w-xl mb-6">
+                    <p className="text-lg md:text-xl font-body max-w-xl mb-6 drop-shadow">
                       {slide.body_text}
                     </p>
                   )}
                   {slide.button_text && slide.button_link && (
                     <Link
                       href={slide.button_link}
-                      className="bg-clay-pink text-deep-mocha px-6 py-3 rounded-full hover:bg-warm-brown transition-colors duration-300 font-body text-lg"
+                      className="bg-clay-pink text-deep-mocha px-6 py-3 rounded-full hover:bg-warm-brown transition-colors duration-300 font-body text-lg shadow-lg"
                     >
                       {slide.button_text}
                     </Link>

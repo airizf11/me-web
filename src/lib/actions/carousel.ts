@@ -8,7 +8,6 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { z } from "zod";
 import { type CarouselSlide } from "@/lib/types";
 
-// Definisi skema validasi untuk input slide carousel
 const CarouselSlideSchema = z.object({
   id: z.string().uuid().optional(),
   image_url: z
@@ -48,8 +47,6 @@ const CarouselSlideSchema = z.object({
   is_active: z.boolean().default(true),
 });
 
-// Helper function untuk Upload Gambar ke Supabase Storage (reuse dari menu.ts)
-// Pastikan bucket 'assets' sudah ada di Supabase Storage
 async function uploadImageToSupabase(
   file: File,
   supabaseClient: any
@@ -61,11 +58,11 @@ async function uploadImageToSupabase(
 
   const fileExtension = file.name.split(".").pop();
   const fileName = `${crypto.randomUUID()}.${fileExtension}`;
-  const filePath = `public/${fileName}`; // Folder 'public' di dalam bucket
+  const filePath = `public/${fileName}`;
 
   try {
     const { data, error } = await supabaseClient.storage
-      .from("assets") // Menggunakan bucket 'assets'
+      .from("assets")
       .upload(filePath, file, {
         cacheControl: "3600",
         upsert: false,
@@ -87,7 +84,6 @@ async function uploadImageToSupabase(
   }
 }
 
-// --- CREATE CAROUSEL SLIDE ---
 export async function createCarouselSlide(formData: FormData) {
   const supabase = await createServerSupabaseClient();
 
@@ -96,11 +92,11 @@ export async function createCarouselSlide(formData: FormData) {
   const buttonText = formData.get("button_text") as string | null;
   const buttonLink = formData.get("button_link") as string | null;
   const altText = formData.get("alt_text") as string;
-  const isAvailable = formData.get("is_active") === "on"; // Checkbox value
+  const isAvailable = formData.get("is_active") === "on";
   const orderIndex = parseInt(formData.get("order_index") as string);
 
-  const imageUrl = formData.get("image_url") as string | null; // Dari AssetManager URL
-  const imageFile = formData.get("image_file") as File | null; // Dari AssetManager File
+  const imageUrl = formData.get("image_url") as string | null;
+  const imageFile = formData.get("image_file") as File | null;
 
   let finalImageUrl: string | null = null;
   if (imageFile && imageFile.size > 0) {
@@ -151,14 +147,13 @@ export async function createCarouselSlide(formData: FormData) {
   }
 
   revalidatePath("/mudir/carousel");
-  revalidatePath("/"); // Revalidasi homepage juga karena carousel tampil di sana
+  revalidatePath("/");
   return {
     success: true,
     message: `Slide "${newSlide.headline}" berhasil ditambahkan.`,
   };
 }
 
-// --- UPDATE CAROUSEL SLIDE ---
 export async function updateCarouselSlide(id: string, formData: FormData) {
   const supabase = await createServerSupabaseClient();
 
@@ -228,14 +223,13 @@ export async function updateCarouselSlide(id: string, formData: FormData) {
 
   revalidatePath("/mudir/carousel");
   revalidatePath(`/mudir/carousel/${id}/edit`);
-  revalidatePath("/"); // Revalidasi homepage
+  revalidatePath("/");
   return {
     success: true,
     message: `Slide "${updatedSlide.headline}" berhasil diperbarui.`,
   };
 }
 
-// --- DELETE CAROUSEL SLIDE ---
 export async function deleteCarouselSlide(id: string) {
   const supabase = await createServerSupabaseClient();
 
@@ -253,11 +247,10 @@ export async function deleteCarouselSlide(id: string) {
   }
 
   revalidatePath("/mudir/carousel");
-  revalidatePath("/"); // Revalidasi homepage
+  revalidatePath("/");
   return { success: true, message: "Slide berhasil dihapus." };
 }
 
-// --- TOGGLE CAROUSEL SLIDE AVAILABILITY ---
 export async function toggleCarouselSlideAvailability(
   id: string,
   currentStatus: boolean
@@ -280,7 +273,7 @@ export async function toggleCarouselSlideAvailability(
   }
 
   revalidatePath("/mudir/carousel");
-  revalidatePath("/"); // Revalidasi homepage
+  revalidatePath("/");
   return {
     success: true,
     message: `Status slide "${updatedSlide.headline}" berhasil diubah.`,

@@ -46,7 +46,7 @@ export function Footer() {
                 href="/blog"
                 className="hover:text-warm-brown transition-colors text-base font-body"
               >
-                Refleksi
+                Blog
               </Link>
             </li>
           </ul>
@@ -54,7 +54,7 @@ export function Footer() {
 
         <div className="md:w-1/3 flex flex-col items-center md:items-end">
           <h3 className="text-xl font-display lowercase mb-4">
-            terhubung dengan kami
+            Terhubung dengan Kami
           </h3>
           <div className="flex space-x-6 mb-4">
             <a
@@ -86,7 +86,7 @@ export function Footer() {
             </a>
           </div>
           <p className="text-sm font-body">
-            © {new Date().getFullYear()} Menurutmu. All right reserved.
+            © {new Date().getFullYear()} menurutmu, All right reserved.
           </p>
         </div>
       </div>

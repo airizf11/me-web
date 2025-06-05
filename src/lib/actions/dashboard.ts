@@ -9,15 +9,13 @@ import {
   type MenuItem,
   type TransactionItem,
 } from "@/lib/types";
-import { getTransactions } from "./transactions/read"; // Import getTransactions dari read.ts
+import { getTransactions } from "./transactions/read";
 
-// --- GET TOTAL SALES SUMMARY (Per Periode) ---
 export async function getTotalSalesSummary(
   period: "daily" | "weekly" | "monthly" | "all" = "monthly"
 ) {
   const supabase = await createServerSupabaseClient();
 
-  // Menggunakan fungsi getTransactions yang sudah ada dengan filter type='sale'
   const { data: sales, error } = await getTransactions({
     period,
     type: "sale",
@@ -37,7 +35,6 @@ export async function getTotalSalesSummary(
   return { totalAmount, count: sales.length, error: null };
 }
 
-// --- GET MENU AND CAROUSEL COUNTS ---
 export async function getMenuAndCarouselCounts() {
   const supabase = await createServerSupabaseClient();
   let menuCount = 0;
@@ -68,27 +65,21 @@ export async function getMenuAndCarouselCounts() {
   return { menuCount, carouselCount, error };
 }
 
-// --- GET RECENT SALES TRANSACTIONS ---
 export async function getRecentSalesTransactions(limit: number = 5) {
   const supabase = await createServerSupabaseClient();
 
-  // Menggunakan fungsi getTransactions dengan filter type='sale' dan limit
-  const { data, error } = await getTransactions({ type: "sale" }); // getTransactions already orders by timestamp desc
+  const { data, error } = await getTransactions({ type: "sale" });
 
   if (error) {
     console.error("Error getting recent sales transactions:", error);
     return { data: [], error: `Gagal memuat transaksi terbaru: ${error}` };
   }
 
-  // Karena getTransactions mengambil semua dan filter, kita potong di sini
-  // Ini bisa dioptimalkan dengan menambahkan limit ke getTransactions jika diperlukan
   const recentSales = data.slice(0, limit);
 
   return { data: recentSales, error: null };
 }
 
-// --- GET TOP SELLING MENUS (Complex Query) ---
-// Ini membutuhkan join dan agregasi di Supabase
 export async function getTopSellingMenus(
   limit: number = 5,
   period: "monthly" | "all" = "monthly"
@@ -111,7 +102,7 @@ export async function getTopSellingMenus(
       )
     `
     )
-    .eq("transaction.type", "sale"); // Hanya item penjualan
+    .eq("transaction.type", "sale");
 
   if (period === "monthly") {
     const now = new Date();
@@ -141,7 +132,6 @@ export async function getTopSellingMenus(
     return { data: [], error: `Gagal memuat menu terlaris: ${error.message}` };
   }
 
-  // Agregasi data di sisi aplikasi (jika tidak bisa dilakukan di Supabase langsung dengan Postgrest)
   const aggregatedSales: {
     [menuItemId: string]: {
       name: string;
@@ -152,7 +142,6 @@ export async function getTopSellingMenus(
   } = {};
 
   (data as any[]).forEach((item) => {
-    // Cast to any[] for simpler access
     const menuItemId = item.menu_item_id;
     const quantity = item.quantity;
     const price = item.price_at_transaction;

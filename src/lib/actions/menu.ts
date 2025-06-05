@@ -159,7 +159,7 @@ export async function updateMenuItem(id: string, formData: FormData) {
   const category = formData.get("category") as string;
   const isAvailable = formData.get("is_available") === "on";
   const imageUrl = formData.get("image_url") as string | null;
-  const orderIndex = parseInt(formData.get("order_index") as string); // Ambil order_index
+  const orderIndex = parseInt(formData.get("order_index") as string);
 
   const validatedFields = MenuItemSchema.safeParse({
     id,

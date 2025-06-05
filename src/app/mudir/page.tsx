@@ -6,10 +6,10 @@ import {
   getMenuAndCarouselCounts,
   getRecentSalesTransactions,
   getTopSellingMenus,
-} from "@/lib/actions/dashboard"; // Import Server Actions dashboard
-import { StatisticCard } from "@/components/admin/dashboard/StatisticCard"; // Akan dibuat
-import { RecentTransactionsList } from "@/components/admin/dashboard/RecentTransactionsList"; // Akan dibuat
-import { TopSellingMenusList } from "@/components/admin/dashboard/TopSellingMenusList"; // Akan dibuat
+} from "@/lib/actions/dashboard";
+import { StatisticCard } from "@/components/admin/dashboard/StatisticCard";
+import { RecentTransactionsList } from "@/components/admin/dashboard/RecentTransactionsList";
+import { TopSellingMenusList } from "@/components/admin/dashboard/TopSellingMenusList";
 import {
   ShoppingBagIcon,
   Squares2X2Icon,
@@ -18,31 +18,29 @@ import {
 } from "@heroicons/react/24/outline";
 
 export const metadata: Metadata = {
-  title: "Dashboard - Mudir Menurutmu",
+  title: "Dashboard - Admin Menurutmu",
   description: "Ringkasan dan statistik utama untuk admin Menurutmu.",
 };
 
 export default async function MudirDashboardPage() {
-  // Fetch semua data dashboard secara paralel
   const [
     salesSummary,
     counts,
     recentTransactionsResult,
     topSellingMenusResult,
   ] = await Promise.all([
-    getTotalSalesSummary("monthly"), // Penjualan Bulan Ini
+    getTotalSalesSummary("monthly"),
     getMenuAndCarouselCounts(),
-    getRecentSalesTransactions(5), // 5 transaksi terbaru
-    getTopSellingMenus(3, "monthly"), // 3 menu terlaris bulan ini
+    getRecentSalesTransactions(5),
+    getTopSellingMenus(3, "monthly"),
   ]);
 
   return (
     <div className="p-4 md:p-8">
       <h1 className="text-3xl font-display lowercase text-deep-mocha mb-8">
-        selamat datang, mudir!
+        Selamat Datang, Admin!
       </h1>
 
-      {/* Ringkasan Statistik Utama */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <Suspense
           fallback={
@@ -101,10 +99,9 @@ export default async function MudirDashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Transaksi Terbaru */}
         <div className="bg-light-cream p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-display lowercase text-deep-mocha mb-4">
-            transaksi penjualan terbaru
+            Transaksi Penjualan Terbaru
           </h2>
           <Suspense
             fallback={
@@ -120,10 +117,9 @@ export default async function MudirDashboardPage() {
           </Suspense>
         </div>
 
-        {/* Menu Terlaris */}
         <div className="bg-light-cream p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-display lowercase text-deep-mocha mb-4">
-            menu terlaris bulan ini
+            Menu Terlaris Bulan ini
           </h2>
           <Suspense
             fallback={
@@ -140,10 +136,10 @@ export default async function MudirDashboardPage() {
         </div>
       </div>
 
-      {/* Placeholder untuk Promo Aktif (akan datang setelah fitur promo) */}
+      {/* Placeholder Promo Aktif */}
       <div className="mt-6 bg-light-cream p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-display lowercase text-deep-mocha mb-4">
-          promo aktif & akan datang
+          Promo Aktif & akan Datang
         </h2>
         <div className="flex items-center justify-center h-24 text-warm-brown font-body">
           <PresentationChartLineIcon className="h-8 w-8 mr-2" />
