@@ -7,8 +7,8 @@ import { type Transaction, type MenuItem } from "@/lib/types";
 // --- GET TRANSACTIONS (dengan filter, untuk halaman daftar) ---
 export async function getTransactions(
   filters: {
-    period?: "daily" | "weekly" | "monthly" | "all";
-    platform?: string; // Ubah nama parameter agar tidak konflik dengan platform_source di DB
+    period?: "daily" | "weekly" | "monthly" | "all" | "custom";
+    platform?: string;
     search?: string;
     startDate?: string;
     endDate?: string;
@@ -33,42 +33,54 @@ export async function getTransactions(
     .order("transaction_timestamp", { ascending: false });
 
   // Implementasi filtering (contoh sederhana)
-  if (filters.period) {
+  if (
+    filters.period &&
+    filters.period !== "all" &&
+    filters.period !== "custom"
+  ) {
     const now = new Date();
-    let startDate;
-    const endDate = now.toISOString();
+    let startDate: Date;
+    const endDate: Date = new Date(); // Default to current time for endDate
+
+    // Set time to start/end of day/week/month
+    now.setHours(0, 0, 0, 0); // Reset time to midnight for daily/weekly/monthly calculations
+    endDate.setHours(23, 59, 59, 999); // Set end of day for endDate
 
     if (filters.period === "daily") {
-      startDate = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate()
-      ).toISOString();
+      startDate = now; // Already set to midnight of current day
     } else if (filters.period === "weekly") {
-      const firstDayOfWeek = new Date(
-        now.setDate(now.getDate() - now.getDay())
-      ); // Sunday
-      startDate = new Date(
-        firstDayOfWeek.getFullYear(),
-        firstDayOfWeek.getMonth(),
-        firstDayOfWeek.getDate()
-      ).toISOString();
+      const dayOfWeek = now.getDay(); // 0 for Sunday, 1 for Monday, etc.
+      startDate = new Date(now.setDate(now.getDate() - dayOfWeek)); // Start of the current week (Sunday)
     } else if (filters.period === "monthly") {
-      startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1); // First day of current month
+    } else {
+      // Should not happen with 'all' and 'custom' already filtered
+      startDate = new Date(); // Fallback
     }
 
-    if (startDate) {
-      query = query
-        .gte("transaction_timestamp", startDate)
-        .lte("transaction_timestamp", endDate);
-    }
+    query = query
+      .gte("transaction_timestamp", startDate.toISOString())
+      .lte("transaction_timestamp", endDate.toISOString());
   }
 
+  // --- FILTER BY CUSTOM DATE RANGE ---
+  // Ini akan menimpa filter period jika period === 'custom'
+  if (filters.period === "custom" && filters.startDate && filters.endDate) {
+    // Pastikan endDate mencakup seluruh hari (sampai akhir hari)
+    const endOfDay = new Date(filters.endDate);
+    endOfDay.setHours(23, 59, 59, 999);
+    query = query
+      .gte("transaction_timestamp", new Date(filters.startDate).toISOString())
+      .lte("transaction_timestamp", endOfDay.toISOString());
+  }
+
+  // --- FILTER BY PLATFORM SOURCE ---
+  // Menggunakan 'platform' dari filter, bukan 'platformSource' (konsistensi)
   if (filters.platform && filters.platform !== "All") {
-    // Gunakan filters.platform
     query = query.eq("platform_source", filters.platform);
   }
 
+  // --- FILTER BY SEARCH TERM (customer name / food delivery ID) ---
   if (filters.search) {
     const searchTerm = `%${filters.search.toLowerCase()}%`;
     query = query.or(
@@ -76,14 +88,7 @@ export async function getTransactions(
     );
   }
 
-  // Custom date range filter
-  if (filters.startDate && filters.endDate) {
-    query = query
-      .gte("transaction_timestamp", filters.startDate)
-      .lte("transaction_timestamp", filters.endDate);
-  }
-
-  // Filter berdasarkan tipe transaksi
+  // --- FILTER BY TRANSACTION TYPE ---
   if (filters.type && filters.type !== "all") {
     query = query.eq("type", filters.type);
   }
@@ -95,7 +100,7 @@ export async function getTransactions(
     return { data: [], error: `Gagal memuat transaksi: ${error.message}` };
   }
 
-  return { data: data as unknown as Transaction[], error: null };
+  return { data: data as Transaction[], error: null };
 }
 
 // --- GET TRANSACTION DETAILS (untuk halaman detail) ---

@@ -1,87 +1,155 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/app/mudir/page.tsx
-"use client";
+import { Metadata } from "next";
+import { Suspense } from "react";
+import {
+  getTotalSalesSummary,
+  getMenuAndCarouselCounts,
+  getRecentSalesTransactions,
+  getTopSellingMenus,
+} from "@/lib/actions/dashboard"; // Import Server Actions dashboard
+import { StatisticCard } from "@/components/admin/dashboard/StatisticCard"; // Akan dibuat
+import { RecentTransactionsList } from "@/components/admin/dashboard/RecentTransactionsList"; // Akan dibuat
+import { TopSellingMenusList } from "@/components/admin/dashboard/TopSellingMenusList"; // Akan dibuat
+import {
+  ShoppingBagIcon,
+  Squares2X2Icon,
+  PhotoIcon,
+  PresentationChartLineIcon,
+} from "@heroicons/react/24/outline";
 
-import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+export const metadata: Metadata = {
+  title: "Dashboard - Mudir Menurutmu",
+  description: "Ringkasan dan statistik utama untuk admin Menurutmu.",
+};
 
-export default function MudirDashboardPage() {
-  const [menuCount, setMenuCount] = useState<number | null>(null);
-  const [carouselCount, setCarouselCount] = useState<number | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const supabase = createClient();
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const { count: menuDataCount, error: menuError } = await supabase
-          .from("menus")
-          .select("*", { count: "exact", head: true })
-          .eq("is_available", true);
-
-        if (menuError) throw menuError;
-        setMenuCount(menuDataCount);
-
-        const { count: carouselDataCount, error: carouselError } =
-          await supabase
-            .from("carousel_slides")
-            .select("*", { count: "exact", head: true })
-            .eq("is_active", true);
-
-        if (carouselError) throw carouselError;
-        setCarouselCount(carouselDataCount);
-      } catch (err: any) {
-        console.error("Error fetching dashboard data:", err.message);
-        setError("Gagal memuat data dashboard.");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+export default async function MudirDashboardPage() {
+  // Fetch semua data dashboard secara paralel
+  const [
+    salesSummary,
+    counts,
+    recentTransactionsResult,
+    topSellingMenusResult,
+  ] = await Promise.all([
+    getTotalSalesSummary("monthly"), // Penjualan Bulan Ini
+    getMenuAndCarouselCounts(),
+    getRecentSalesTransactions(5), // 5 transaksi terbaru
+    getTopSellingMenus(3, "monthly"), // 3 menu terlaris bulan ini
+  ]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-full">
-      <h1 className="text-4xl font-display lowercase text-deep-mocha mb-8">
-        selamat datang, Admin!
+    <div className="p-4 md:p-8">
+      <h1 className="text-3xl font-display lowercase text-deep-mocha mb-8">
+        selamat datang, mudir!
       </h1>
-      <p className="text-lg font-body text-warm-brown mb-12 text-center">
-        Ini adalah panel kontrol Anda. Pilih menu di sidebar untuk mulai
-        mengelola.
-      </p>
 
-      {loading ? (
-        <div className="text-deep-mocha font-body text-xl">Memuat data...</div>
-      ) : error ? (
-        <div className="bg-red-100 border border-red-400 text-red-700 p-4 rounded-lg">
-          {error}
+      {/* Ringkasan Statistik Utama */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <Suspense
+          fallback={
+            <StatisticCard
+              title="Penjualan Bulan Ini"
+              value="Memuat..."
+              icon={ShoppingBagIcon}
+            />
+          }
+        >
+          <StatisticCard
+            title="Penjualan Bulan Ini"
+            value={salesSummary.totalAmount.toLocaleString("id-ID", {
+              style: "currency",
+              currency: "IDR",
+            })}
+            description={`${salesSummary.count} transaksi`}
+            icon={ShoppingBagIcon}
+            error={salesSummary.error}
+          />
+        </Suspense>
+        <Suspense
+          fallback={
+            <StatisticCard
+              title="Menu Aktif"
+              value="Memuat..."
+              icon={Squares2X2Icon}
+            />
+          }
+        >
+          <StatisticCard
+            title="Menu Aktif"
+            value={counts.menuCount.toString()}
+            description="item menu"
+            icon={Squares2X2Icon}
+            error={counts.error}
+          />
+        </Suspense>
+        <Suspense
+          fallback={
+            <StatisticCard
+              title="Carousel Aktif"
+              value="Memuat..."
+              icon={PhotoIcon}
+            />
+          }
+        >
+          <StatisticCard
+            title="Carousel Aktif"
+            value={counts.carouselCount.toString()}
+            description="slide tayang"
+            icon={PhotoIcon}
+            error={counts.error}
+          />
+        </Suspense>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Transaksi Terbaru */}
+        <div className="bg-light-cream p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-display lowercase text-deep-mocha mb-4">
+            transaksi penjualan terbaru
+          </h2>
+          <Suspense
+            fallback={
+              <div className="text-warm-brown text-center py-4">
+                Memuat transaksi...
+              </div>
+            }
+          >
+            <RecentTransactionsList
+              transactions={recentTransactionsResult.data}
+              error={recentTransactionsResult.error}
+            />
+          </Suspense>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-4xl">
-          <div className="bg-warm-brown text-light-cream p-6 rounded-lg shadow-md text-center">
-            <h3 className="text-xl font-display lowercase mb-2">total menu</h3>
-            <p className="text-3xl font-bold font-body">{menuCount}</p>
-            <p className="text-sm">aktif</p>
-          </div>
-          <div className="bg-warm-brown text-light-cream p-6 rounded-lg shadow-md text-center">
-            <h3 className="text-xl font-display lowercase mb-2">
-              carousel slides
-            </h3>
-            <p className="text-3xl font-bold font-body">{carouselCount}</p>
-            <p className="text-sm">tayang</p>
-          </div>
-          <div className="bg-warm-brown text-light-cream p-6 rounded-lg shadow-md text-center">
-            <h3 className="text-xl font-display lowercase mb-2">
-              feedback terbaru
-            </h3>
-            <p className="text-lg font-body">Belum ada</p> {/* placeholder */}
-            <p className="text-sm">dari konsumen</p>
-          </div>
+
+        {/* Menu Terlaris */}
+        <div className="bg-light-cream p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-display lowercase text-deep-mocha mb-4">
+            menu terlaris bulan ini
+          </h2>
+          <Suspense
+            fallback={
+              <div className="text-warm-brown text-center py-4">
+                Memuat menu terlaris...
+              </div>
+            }
+          >
+            <TopSellingMenusList
+              menus={topSellingMenusResult.data}
+              error={topSellingMenusResult.error}
+            />
+          </Suspense>
         </div>
-      )}
+      </div>
+
+      {/* Placeholder untuk Promo Aktif (akan datang setelah fitur promo) */}
+      <div className="mt-6 bg-light-cream p-6 rounded-lg shadow-md">
+        <h2 className="text-xl font-display lowercase text-deep-mocha mb-4">
+          promo aktif & akan datang
+        </h2>
+        <div className="flex items-center justify-center h-24 text-warm-brown font-body">
+          <PresentationChartLineIcon className="h-8 w-8 mr-2" />
+          <span>Fitur manajemen promo akan segera hadir!</span>
+        </div>
+      </div>
     </div>
   );
 }
