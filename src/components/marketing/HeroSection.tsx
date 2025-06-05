@@ -38,13 +38,13 @@ export function HeroSection({
         priority
         sizes="100vw"
         style={{ objectFit: "cover" }}
-        className="brightness-[0.8]"
+        className="brightness-[0.78]"
       />
 
       <div
         className="absolute inset-0 flex flex-col items-center justify-center text-center px-4"
         style={{
-          backgroundColor: "rgba(109, 76, 65, 0.3)",
+          backgroundColor: "rgba(109, 76, 65, 0.23)",
           color: "#EFE9E4",
         }}
       >

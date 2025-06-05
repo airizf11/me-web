@@ -4,15 +4,11 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link"; // Import Link
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { type CarouselSlide } from "@/lib/types";
-
-// Swiper components
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
-
-// Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
@@ -118,7 +114,7 @@ export function Carousel() {
 
   return (
     <div className="relative w-full rounded-lg overflow-hidden shadow-xl">
-      <div className="aspect-[4/3] w-full">
+      <div className="aspect-[3/4] w-full">
         <Swiper
           spaceBetween={30}
           centeredSlides={true}
@@ -142,14 +138,13 @@ export function Carousel() {
                   fill
                   style={{ objectFit: "cover" }}
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  className="brightness-[0.9]" // Sama seperti HeroSection, agar gambar tetap terlihat
+                  className="brightness-[0.95]"
                 />
-                {/* PENTING: Perbaikan Overlay Transparan */}
                 <div
                   className="absolute inset-0 flex flex-col justify-center items-center p-8 text-center"
                   style={{
-                    backgroundColor: "rgba(109, 76, 65, 0.25)", // deep-mocha dengan opasitas 50%
-                    color: "#EFE9E4", // light-cream untuk teks
+                    backgroundColor: "rgba(109, 76, 65, 0.25)",
+                    color: "#EFE9E4",
                   }}
                 >
                   <h2 className="text-4xl md:text-5xl font-display lowercase mb-4 leading-tight drop-shadow">

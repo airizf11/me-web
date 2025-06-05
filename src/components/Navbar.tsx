@@ -17,13 +17,11 @@ const navigation = [
 
 export function Navbar() {
   const [scrollY, setScrollY] = useState(0);
-  const [heroHeight, setHeroHeight] = useState(0); // Menyimpan tinggi HeroSection setelah mount
+  const [heroHeight, setHeroHeight] = useState(0);
   const pathname = usePathname();
 
   useEffect(() => {
-    // Pastikan ini hanya berjalan di klien
-    setHeroHeight(window.innerHeight); // HeroSection biasanya setinggi viewport (h-screen)
-
+    setHeroHeight(window.innerHeight);
     const handleScroll = () => {
       setScrollY(window.scrollY);
     };
@@ -32,42 +30,36 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const isHomePage = pathname === "/";
-  const scrollThreshold = heroHeight * 0.7; // 70% dari tinggi HeroSection
+  // PENTING: Logika baru untuk isHeroPage
+  const isHeroPage = pathname === "/" || pathname.startsWith("/menu/"); // Efek berlaku untuk Home dan halaman detail Menu
+  const scrollThreshold = isHeroPage ? heroHeight * 0.7 : 0;
 
-  // Hitung opasitas (alpha value untuk rgba)
-  const opacity = isHomePage
-    ? Math.min(1, scrollY / scrollThreshold) // 0 saat scrollY=0, 1 saat scrollY >= threshold
-    : 1; // Selalu 1 (padat) di halaman lain
+  const opacity = isHeroPage ? Math.min(1, scrollY / scrollThreshold) : 1;
 
-  // Warna dasar Navbar (deep-mocha: #6D4C41)
-  const baseColor = { r: 109, g: 76, b: 65 }; // Hex #6D4C41
-
-  // Background Navbar dinamis
+  const baseColor = { r: 109, g: 76, b: 65 };
   const navbarBg = `rgba(${baseColor.r}, ${baseColor.g}, ${baseColor.b}, ${opacity})`;
 
-  // Warna teks/logo/tombol dinamis berdasarkan opasitas
-  const isSolid = opacity > 0.5; // Jika opasitas sudah cukup tinggi, anggap padat
+  const isSolid = opacity > 0.5;
   const textColor =
-    isHomePage && !isSolid ? "text-light-cream" : "text-light-cream"; // Warna teks selalu putih di navbar gelap
+    isHeroPage && !isSolid ? "text-light-cream" : "text-light-cream";
   const hoverTextColor =
-    isHomePage && !isSolid ? "hover:text-clay-pink" : "hover:text-warm-brown";
+    isHeroPage && !isSolid ? "hover:text-clay-pink" : "hover:text-warm-brown";
 
   const buttonBgColor =
-    isHomePage && !isSolid ? "bg-light-cream" : "bg-clay-pink";
+    isHeroPage && !isSolid ? "bg-light-cream" : "bg-clay-pink";
   const buttonTextColor =
-    isHomePage && !isSolid ? "text-deep-mocha" : "text-deep-mocha";
+    isHeroPage && !isSolid ? "text-deep-mocha" : "text-deep-mocha";
   const buttonHoverBgColor =
-    isHomePage && !isSolid ? "hover:bg-clay-pink" : "hover:bg-warm-brown";
+    isHeroPage && !isSolid ? "hover:bg-clay-pink" : "hover:bg-warm-brown";
 
   return (
     <Popover
       className={clsx(
-        "fixed inset-x-0 top-0 z-50 transition-shadow duration-300", // Hanya transisi shadow
+        "fixed inset-x-0 top-0 z-50 transition-shadow duration-300",
         scrollY >= scrollThreshold && "shadow-md"
       )}
       style={{
-        backgroundColor: navbarBg, // Gunakan background rgba dinamis
+        backgroundColor: navbarBg,
       }}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -90,9 +82,9 @@ export function Navbar() {
             <Popover.Button
               className={clsx(
                 "relative inline-flex items-center justify-center rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-inset",
-                isHomePage && !isSolid
-                  ? "bg-transparent text-light-cream hover:bg-white/20 focus:ring-light-cream" // Saat transparan
-                  : "bg-transparent text-light-cream hover:bg-white/20 focus:ring-light-cream" // Selalu putih/transparan saat gelap
+                isHeroPage && !isSolid
+                  ? "bg-transparent text-light-cream hover:bg-white/20 focus:ring-light-cream"
+                  : "bg-transparent text-light-cream hover:bg-white/20 focus:ring-light-cream"
               )}
             >
               <span className="sr-only">Open menu</span>
@@ -148,12 +140,8 @@ export function Navbar() {
           focus
           className="absolute inset-x-0 top-0 z-10 origin-top-right transform p-2 transition md:hidden"
         >
-          {(
-            { close } // Akses fungsi close dari Popover.Panel
-          ) => (
+          {({ close }) => (
             <div className="divide-y-2 divide-warm-brown rounded-lg bg-deep-mocha shadow-lg ring-1 ring-black ring-opacity-5">
-              {" "}
-              {/* Ubah bg jadi deep-mocha */}
               <div className="px-5 pb-6 pt-5">
                 <div className="flex items-center justify-between">
                   {/* Logo di Panel Mobile */}
@@ -177,7 +165,7 @@ export function Navbar() {
                       <Link
                         key={item.name}
                         href={item.href}
-                        onClick={() => close()} // PENTING: Tambahkan onClick={() => close()} untuk auto close
+                        onClick={() => close()}
                         className="-m-3 flex items-center rounded-md p-3 text-light-cream hover:bg-warm-brown font-body text-xl"
                       >
                         <span className="ml-3 text-base font-medium">
@@ -193,7 +181,7 @@ export function Navbar() {
                 <div>
                   <Link
                     href="/checkout"
-                    onClick={() => close()} // PENTING: Tambahkan onClick={() => close()}
+                    onClick={() => close()}
                     className="flex w-full items-center justify-center rounded-md border border-transparent bg-clay-pink px-4 py-2 text-base font-medium text-deep-mocha shadow-sm hover:bg-warm-brown hover:text-light-cream"
                   >
                     Pesan Sekarang

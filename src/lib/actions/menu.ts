@@ -4,7 +4,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import {
+  createServerSupabaseClient,
+  createServerSupabaseClientReadOnly,
+} from "@/lib/supabase/server";
 import { z } from "zod";
 import { type MenuItem } from "@/lib/types";
 
@@ -37,6 +40,10 @@ const MenuItemSchema = z.object({
     .int()
     .min(0, "Order index harus berupa bilangan bulat positif.")
     .default(0),
+  additional_images: z
+    .array(z.string().url("URL gambar tambahan tidak valid."))
+    .optional()
+    .nullable(),
 });
 
 async function uploadImageToSupabase(
@@ -87,6 +94,23 @@ export async function createMenuItem(formData: FormData) {
   const isAvailable = formData.get("is_available") === "on";
   const imageUrl = formData.get("image_url") as string | null;
   const orderIndex = parseInt(formData.get("order_index") as string);
+  const additionalImagesJson = formData.get("additional_images") as
+    | string
+    | null;
+  let additionalImages: string[] | null = null;
+  if (additionalImagesJson) {
+    try {
+      const parsedImages = JSON.parse(additionalImagesJson);
+      if (
+        Array.isArray(parsedImages) &&
+        parsedImages.every((img) => typeof img === "string")
+      ) {
+        additionalImages = parsedImages;
+      }
+    } catch (e) {
+      console.error("Failed to parse additional_images JSON:", e);
+    }
+  }
 
   const validatedFields = MenuItemSchema.safeParse({
     name,
@@ -97,6 +121,7 @@ export async function createMenuItem(formData: FormData) {
     category,
     is_available: isAvailable,
     order_index: orderIndex,
+    additional_images: additionalImages || null,
   });
 
   if (!validatedFields.success) {
@@ -160,6 +185,23 @@ export async function updateMenuItem(id: string, formData: FormData) {
   const isAvailable = formData.get("is_available") === "on";
   const imageUrl = formData.get("image_url") as string | null;
   const orderIndex = parseInt(formData.get("order_index") as string);
+  const additionalImagesJson = formData.get("additional_images") as
+    | string
+    | null;
+  let additionalImages: string[] | null = null;
+  if (additionalImagesJson) {
+    try {
+      const parsedImages = JSON.parse(additionalImagesJson);
+      if (
+        Array.isArray(parsedImages) &&
+        parsedImages.every((img) => typeof img === "string")
+      ) {
+        additionalImages = parsedImages;
+      }
+    } catch (e) {
+      console.error("Failed to parse additional_images JSON for update:", e);
+    }
+  }
 
   const validatedFields = MenuItemSchema.safeParse({
     id,
@@ -171,6 +213,7 @@ export async function updateMenuItem(id: string, formData: FormData) {
     category,
     is_available: isAvailable,
     order_index: orderIndex,
+    additional_images: additionalImages || null,
   });
 
   if (!validatedFields.success) {
@@ -272,4 +315,62 @@ export async function toggleMenuItemAvailability(
     success: true,
     message: `Status ketersediaan menu "${updatedItem.name}" berhasil diubah.`,
   };
+}
+
+export async function getMenuItemBySlug(slug: string) {
+  const supabase = await createServerSupabaseClientReadOnly();
+  const { data, error } = await supabase
+    .from("menus")
+    .select("*")
+    .eq("slug", slug)
+    .eq("is_available", true)
+    .single();
+
+  if (error) {
+    console.error(`Error fetching menu by slug ${slug}:`, error.message);
+    return { data: null, error: `Menu tidak ditemukan atau tidak tersedia.` };
+  }
+  return { data: data as MenuItem, error: null };
+}
+
+export async function getAllCategories() {
+  const supabase = await createServerSupabaseClientReadOnly();
+  const { data, error } = await supabase
+    .from("menus")
+    .select("category, count")
+    .eq("is_available", true)
+    .order("category", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching categories:", error.message);
+    return { data: [], error: `Gagal memuat kategori.` };
+  }
+
+  return { data: data as { category: string; count: number }[], error: null };
+}
+
+export async function getMenusByCategory(category: string | "all") {
+  const supabase = await createServerSupabaseClientReadOnly();
+  let query = supabase
+    .from("menus")
+    .select("*")
+    .eq("is_available", true)
+    .order("order_index", { ascending: true })
+    .order("name", { ascending: true });
+
+  if (category !== "all") {
+    query = query.eq("category", category);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error(
+      `Error fetching menus for category ${category}:`,
+      error.message
+    );
+    return { data: [], error: `Gagal memuat menu untuk kategori ini.` };
+  }
+
+  return { data: data as MenuItem[], error: null };
 }

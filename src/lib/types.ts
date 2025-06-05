@@ -10,8 +10,14 @@ export type MenuItem = {
   category: string;
   is_available: boolean;
   order_index: number;
+  additional_images?: string[] | null;
   created_at: string;
   updated_at: string;
+};
+
+export type MenuCategory = {
+  name: string;
+  count: number;
 };
 
 export type CarouselSlide = {
