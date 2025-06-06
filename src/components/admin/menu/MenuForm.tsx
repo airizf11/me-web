@@ -11,9 +11,9 @@ import { AssetManager } from "@/components/admin/AssetManager";
 import {
   PencilIcon,
   PlusCircleIcon,
-  TrashIcon,
   XMarkIcon,
-} from "@heroicons/react/24/outline"; // Tambah XMarkIcon
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import Image from "next/image";
 
 type MenuFormProps = {
@@ -43,12 +43,15 @@ export function MenuForm({ initialData }: MenuFormProps) {
   );
   const [orderIndex, setOrderIndex] = useState(initialData?.order_index || 0);
 
-  // PENTING: State untuk gambar tambahan
+  // PENTING: Inisialisasi additionalImages dengan array kosong jika null/undefined/bukan array
   const [additionalImages, setAdditionalImages] = useState<string[]>(
-    initialData?.additional_images || []
+    Array.isArray(initialData?.additional_images)
+      ? initialData.additional_images
+      : []
   );
+
   const [currentAdditionalImageIndex, setCurrentAdditionalImageIndex] =
-    useState<number | null>(null); // Index gambar yang sedang diedit/ditambahkan
+    useState<number | null>(null);
   const [showAdditionalImageModal, setShowAdditionalImageModal] =
     useState(false);
 
@@ -61,7 +64,12 @@ export function MenuForm({ initialData }: MenuFormProps) {
     setCategory(initialData?.category || "Coffee");
     setIsAvailable(initialData?.is_available ?? true);
     setOrderIndex(initialData?.order_index || 0);
-    setAdditionalImages(initialData?.additional_images || []); // Set nilai awal
+    // PENTING: Pastikan ini selalu array saat reset
+    setAdditionalImages(
+      Array.isArray(initialData?.additional_images)
+        ? initialData.additional_images
+        : []
+    );
     setErrors(null);
   }, [initialData]);
 
@@ -80,12 +88,10 @@ export function MenuForm({ initialData }: MenuFormProps) {
     }
   }, [name, initialData]);
 
-  // Handler untuk AssetManager gambar utama
   const handleMainImageSelect = (url: string | null) => {
     setFinalImageUrl(url);
   };
 
-  // Handler untuk AssetManager gambar tambahan (dalam modal)
   const handleAdditionalImageSelect = (url: string | null) => {
     setAdditionalImages((prevImages) => {
       if (
@@ -112,7 +118,7 @@ export function MenuForm({ initialData }: MenuFormProps) {
   };
 
   const handleAddAdditionalImage = () => {
-    setCurrentAdditionalImageIndex(null); // Menandakan mode tambah
+    setCurrentAdditionalImageIndex(null);
     setShowAdditionalImageModal(true);
   };
 
@@ -135,7 +141,6 @@ export function MenuForm({ initialData }: MenuFormProps) {
     formData.set("slug", slug);
     formData.set("image_url", finalImageUrl || "");
     formData.set("order_index", orderIndex.toString());
-    // PENTING: Sertakan gambar tambahan sebagai JSON string
     formData.set("additional_images", JSON.stringify(additionalImages));
 
     let result;
@@ -270,37 +275,41 @@ export function MenuForm({ initialData }: MenuFormProps) {
           gambar tambahan
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
-          {additionalImages.map((imgUrl, index) => (
-            <div
-              key={index}
-              className="relative aspect-square rounded-md overflow-hidden border border-clay-pink shadow-sm group"
-            >
-              <Image
-                src={imgUrl}
-                alt={`Gambar tambahan ${index + 1}`}
-                fill
-                style={{ objectFit: "cover" }}
-              />
-              <div className="absolute inset-0 bg-deep-mocha bg-opacity-70 flex items-center justify-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button
-                  type="button"
-                  onClick={() => handleEditAdditionalImage(index)}
-                  className="p-2 rounded-full bg-light-cream text-deep-mocha hover:bg-clay-pink transition-colors"
-                  aria-label="Edit gambar tambahan"
-                >
-                  <PencilIcon className="h-5 w-5" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleRemoveAdditionalImage(index)}
-                  className="p-2 rounded-full bg-red-500 text-light-cream hover:bg-red-600 transition-colors"
-                  aria-label="Hapus gambar tambahan"
-                >
-                  <TrashIcon className="h-5 w-5" />
-                </button>
+          {/* PENTING: Pastikan additionalImages selalu array sebelum memanggil .map() */}
+          {/* Menggunakan Array.isArray untuk verifikasi runtime */}
+          {(Array.isArray(additionalImages) ? additionalImages : []).map(
+            (imgUrl, index) => (
+              <div
+                key={index}
+                className="relative aspect-square rounded-md overflow-hidden border border-clay-pink shadow-sm group"
+              >
+                <Image
+                  src={imgUrl}
+                  alt={`Gambar tambahan ${index + 1}`}
+                  fill
+                  style={{ objectFit: "cover" }}
+                />
+                <div className="absolute inset-0 bg-deep-mocha bg-opacity-70 flex items-center justify-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    type="button"
+                    onClick={() => handleEditAdditionalImage(index)}
+                    className="p-2 rounded-full bg-light-cream text-deep-mocha hover:bg-clay-pink transition-colors"
+                    aria-label="Edit gambar tambahan"
+                  >
+                    <PencilIcon className="h-5 w-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveAdditionalImage(index)}
+                    className="p-2 rounded-full bg-red-500 text-light-cream hover:bg-red-600 transition-colors"
+                    aria-label="Hapus gambar tambahan"
+                  >
+                    <TrashIcon className="h-5 w-5" />
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          )}
           {/* Tombol Tambah Gambar */}
           <button
             type="button"
