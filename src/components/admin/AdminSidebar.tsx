@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Cog6ToothIcon,
+  FolderIcon,
   HomeIcon,
   ListBulletIcon,
   PhotoIcon,
@@ -24,6 +25,7 @@ const adminNavItems = [
     href: "/mudir/transactions",
     icon: ShoppingCartIcon,
   },
+  { name: "Manajemen Aset", href: "/mudir/assets", icon: FolderIcon },
   { name: "Pengaturan", href: "/mudir/settings", icon: Cog6ToothIcon },
 ];
 

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/lib/actions/menu.ts
 "use server";
 
@@ -45,43 +43,6 @@ const MenuItemSchema = z.object({
     .optional()
     .nullable(),
 });
-
-async function uploadImageToSupabase(
-  file: File,
-  supabaseClient: any
-): Promise<string | null> {
-  if (!file || file.size === 0) {
-    console.warn("No file or empty file provided for upload.");
-    return null;
-  }
-
-  const fileExtension = file.name.split(".").pop();
-  const fileName = `${crypto.randomUUID()}.${fileExtension}`;
-  const filePath = `public/${fileName}`;
-
-  try {
-    const { data, error } = await supabaseClient.storage
-      .from("assets")
-      .upload(filePath, file, {
-        cacheControl: "3600",
-        upsert: false,
-      });
-
-    if (error) throw error;
-
-    const { data: publicUrlData } = supabaseClient.storage
-      .from("assets")
-      .getPublicUrl(data.path);
-
-    if (!publicUrlData.publicUrl)
-      throw new Error("Gagal mendapatkan URL publik setelah upload.");
-
-    return publicUrlData.publicUrl;
-  } catch (error: any) {
-    console.error("Error uploading image to Supabase Storage:", error.message);
-    return null;
-  }
-}
 
 export async function createMenuItem(formData: FormData) {
   const supabase = await createServerSupabaseClient();

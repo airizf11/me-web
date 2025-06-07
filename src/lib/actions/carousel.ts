@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // src/lib/actions/carousel.ts
 "use server";
@@ -7,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { z } from "zod";
 import { type CarouselSlide } from "@/lib/types";
+import { uploadAssetToSupabase } from "./assets";
 
 const CarouselSlideSchema = z.object({
   id: z.string().uuid().optional(),
@@ -47,43 +47,6 @@ const CarouselSlideSchema = z.object({
   is_active: z.boolean().default(true),
 });
 
-async function uploadImageToSupabase(
-  file: File,
-  supabaseClient: any
-): Promise<string | null> {
-  if (!file || file.size === 0) {
-    console.warn("No file or empty file provided for upload.");
-    return null;
-  }
-
-  const fileExtension = file.name.split(".").pop();
-  const fileName = `${crypto.randomUUID()}.${fileExtension}`;
-  const filePath = `public/${fileName}`;
-
-  try {
-    const { data, error } = await supabaseClient.storage
-      .from("assets")
-      .upload(filePath, file, {
-        cacheControl: "3600",
-        upsert: false,
-      });
-
-    if (error) throw error;
-
-    const { data: publicUrlData } = supabaseClient.storage
-      .from("assets")
-      .getPublicUrl(data.path);
-
-    if (!publicUrlData.publicUrl)
-      throw new Error("Gagal mendapatkan URL publik setelah upload.");
-
-    return publicUrlData.publicUrl;
-  } catch (error: any) {
-    console.error("Error uploading image to Supabase Storage:", error.message);
-    return null;
-  }
-}
-
 export async function createCarouselSlide(formData: FormData) {
   const supabase = await createServerSupabaseClient();
 
@@ -94,23 +57,7 @@ export async function createCarouselSlide(formData: FormData) {
   const altText = formData.get("alt_text") as string;
   const isAvailable = formData.get("is_active") === "on";
   const orderIndex = parseInt(formData.get("order_index") as string);
-
   const imageUrl = formData.get("image_url") as string | null;
-  const imageFile = formData.get("image_file") as File | null;
-
-  let finalImageUrl: string | null = null;
-  if (imageFile && imageFile.size > 0) {
-    const uploadedUrl = await uploadImageToSupabase(imageFile, supabase);
-    if (uploadedUrl) {
-      finalImageUrl = uploadedUrl;
-    } else {
-      return { success: false, message: "Gagal mengupload gambar." };
-    }
-  } else if (imageUrl) {
-    finalImageUrl = imageUrl;
-  } else {
-    finalImageUrl = null;
-  }
 
   const validatedFields = CarouselSlideSchema.safeParse({
     headline,
@@ -120,7 +67,7 @@ export async function createCarouselSlide(formData: FormData) {
     alt_text: altText,
     is_active: isAvailable,
     order_index: orderIndex,
-    image_url: finalImageUrl,
+    image_url: imageUrl,
   });
 
   if (!validatedFields.success) {
@@ -164,23 +111,7 @@ export async function updateCarouselSlide(id: string, formData: FormData) {
   const altText = formData.get("alt_text") as string;
   const isAvailable = formData.get("is_active") === "on";
   const orderIndex = parseInt(formData.get("order_index") as string);
-
   const imageUrl = formData.get("image_url") as string | null;
-  const imageFile = formData.get("image_file") as File | null;
-
-  let finalImageUrl: string | null = null;
-  if (imageFile && imageFile.size > 0) {
-    const uploadedUrl = await uploadImageToSupabase(imageFile, supabase);
-    if (uploadedUrl) {
-      finalImageUrl = uploadedUrl;
-    } else {
-      return { success: false, message: "Gagal mengupload gambar baru." };
-    }
-  } else if (imageUrl) {
-    finalImageUrl = imageUrl;
-  } else {
-    finalImageUrl = null;
-  }
 
   const validatedFields = CarouselSlideSchema.safeParse({
     id,
@@ -191,7 +122,7 @@ export async function updateCarouselSlide(id: string, formData: FormData) {
     alt_text: altText,
     is_active: isAvailable,
     order_index: orderIndex,
-    image_url: finalImageUrl,
+    image_url: imageUrl,
   });
 
   if (!validatedFields.success) {

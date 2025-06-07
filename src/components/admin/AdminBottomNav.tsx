@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  FolderIcon,
   HomeIcon,
   ListBulletIcon,
   PhotoIcon,
@@ -12,9 +13,10 @@ import {
 
 const bottomNavItems = [
   { name: "Dashboard", href: "/mudir", icon: HomeIcon },
-  { name: "Menus", href: "/mudir/menus", icon: ListBulletIcon },
+  { name: "Menu", href: "/mudir/menus", icon: ListBulletIcon },
   { name: "Carousel", href: "/mudir/carousel", icon: PhotoIcon },
-  { name: "Transaksi", href: "/mudir/transactions", icon: ShoppingCartIcon },
+  { name: "Penjualan", href: "/mudir/transactions", icon: ShoppingCartIcon },
+  { name: "Assets", href: "/mudir/assets", icon: FolderIcon },
   // Tambah link lain (misal 'Settings')
 ];
 
