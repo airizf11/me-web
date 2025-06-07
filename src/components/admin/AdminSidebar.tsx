@@ -5,10 +5,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Cog6ToothIcon,
+  CubeIcon,
   FolderIcon,
   HomeIcon,
   ListBulletIcon,
   PhotoIcon,
+  ShoppingBagIcon,
   ShoppingCartIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
@@ -21,9 +23,19 @@ const adminNavItems = [
   { name: "Manajemen Carousel", href: "/mudir/carousel", icon: PhotoIcon },
   // Tambah link lain
   {
-    name: "Catatan Transaksi",
+    name: "Catatan Penjualan",
     href: "/mudir/transactions",
     icon: ShoppingCartIcon,
+  },
+  {
+    name: "Catatan Pembelian",
+    href: "/mudir/purchases",
+    icon: ShoppingBagIcon,
+  },
+  {
+    name: "Manajemen Bahan Baku",
+    href: "/mudir/raw-materials",
+    icon: CubeIcon,
   },
   { name: "Manajemen Aset", href: "/mudir/assets", icon: FolderIcon },
   { name: "Pengaturan", href: "/mudir/settings", icon: Cog6ToothIcon },

@@ -1,0 +1,302 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// src/components/admin/purchase/RawMaterialSelector.tsx
+"use client";
+
+import { useState, useRef, useEffect, useCallback } from "react";
+import toast from "react-hot-toast";
+import { useDebounce } from "use-debounce";
+import { getRawMaterialsForSelector } from "@/lib/actions/raw_materials"; // Server Action
+import {
+  PlusCircleIcon,
+  MinusCircleIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline"; // Ikon
+
+interface RawMaterialSelectorItem {
+  id: string;
+  name: string;
+  unit: string;
+  last_purchase_price: number | null;
+}
+
+// Tipe item pembelian yang sudah dipilih
+interface SelectedPurchaseItem {
+  id: string; // ID unik untuk item ini di UI
+  raw_material_id: string;
+  raw_material_name: string;
+  quantity: number;
+  unit: string;
+  unit_price: number; // Harga satuan saat pembelian ini
+  subtotal: number;
+}
+
+type RawMaterialSelectorProps = {
+  // Callback saat daftar item pembelian berubah
+  onItemsChange: (
+    items: Omit<SelectedPurchaseItem, "id" | "raw_material_name" | "subtotal">[]
+  ) => void;
+  // Callback untuk update total amount di parent (PurchaseForm)
+  onTotalAmountChange: (total: number) => void;
+  // Item awal jika ini untuk mode edit pembelian
+  initialItems?: SelectedPurchaseItem[];
+};
+
+export function RawMaterialSelector({
+  onItemsChange,
+  onTotalAmountChange,
+  initialItems = [],
+}: RawMaterialSelectorProps) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm] = useDebounce(searchTerm, 500);
+  const [searchResults, setSearchResults] = useState<RawMaterialSelectorItem[]>(
+    []
+  );
+  const [loadingSearch, setLoadingSearch] = useState(false);
+  const [selectedItems, setSelectedItems] =
+    useState<SelectedPurchaseItem[]>(initialItems);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const onItemsChangeRef = useRef(onItemsChange);
+  const onTotalAmountChangeRef = useRef(onTotalAmountChange);
+
+  useEffect(() => {
+    onItemsChangeRef.current = onItemsChange;
+    onTotalAmountChangeRef.current = onTotalAmountChange;
+  }, [onItemsChange, onTotalAmountChange]);
+
+  useEffect(() => {
+    const currentItemsData = selectedItems.map((item) => ({
+      raw_material_id: item.raw_material_id,
+      quantity: item.quantity,
+      unit: item.unit,
+      unit_price: item.unit_price,
+    }));
+
+    const currentItemsString = JSON.stringify(currentItemsData);
+    const previousItemsString = JSON.stringify(
+      (onItemsChangeRef.current as any).itemsCache || []
+    );
+
+    if (currentItemsString !== previousItemsString) {
+      const total = selectedItems.reduce((sum, item) => sum + item.subtotal, 0);
+      onTotalAmountChangeRef.current(total);
+      onItemsChangeRef.current(currentItemsData);
+
+      (onItemsChangeRef.current as any).itemsCache = currentItemsData;
+    }
+  }, [selectedItems]);
+
+  const handleSearch = useCallback(async () => {
+    if (debouncedSearchTerm.length < 2) {
+      setSearchResults([]);
+      return;
+    }
+    setLoadingSearch(true);
+    const { data, error } = await getRawMaterialsForSelector(
+      debouncedSearchTerm
+    );
+    if (error) {
+      toast.error(error);
+      setSearchResults([]);
+    } else {
+      setSearchResults(data);
+    }
+    setLoadingSearch(false);
+  }, [debouncedSearchTerm]);
+
+  useEffect(() => {
+    handleSearch();
+  }, [handleSearch]);
+
+  const handleAddItem = (item: RawMaterialSelectorItem) => {
+    setSelectedItems((prevItems) => {
+      const existingItem = prevItems.find(
+        (si) => si.raw_material_id === item.id
+      );
+      if (existingItem) {
+        return prevItems.map((si) =>
+          si.raw_material_id === item.id
+            ? {
+                ...si,
+                quantity: si.quantity + 1,
+                subtotal: (si.quantity + 1) * si.unit_price,
+              }
+            : si
+        );
+      } else {
+        const uniqueLocalId = `${Date.now()}-${Math.random()
+          .toString(36)
+          .substring(2, 9)}`;
+        return [
+          ...prevItems,
+          {
+            id: uniqueLocalId,
+            raw_material_id: item.id,
+            raw_material_name: item.name,
+            quantity: 1,
+            unit: item.unit,
+            unit_price: item.last_purchase_price || 0, // Gunakan last_purchase_price sebagai default
+            subtotal: item.last_purchase_price || 0,
+          },
+        ];
+      }
+    });
+    setSearchTerm("");
+    setSearchResults([]);
+    searchInputRef.current?.focus();
+  };
+
+  const handleQuantityChange = (itemId: string, delta: number) => {
+    setSelectedItems((prevItems) => {
+      const updatedItems = prevItems
+        .map((si) =>
+          si.id === itemId
+            ? {
+                ...si,
+                quantity: Math.max(1, si.quantity + delta),
+                subtotal: Math.max(1, si.quantity + delta) * si.unit_price,
+              }
+            : si
+        )
+        .filter((si) => si.quantity > 0);
+      return updatedItems;
+    });
+  };
+
+  const handleUnitPriceChange = (itemId: string, newPrice: number) => {
+    setSelectedItems((prevItems) => {
+      return prevItems.map((si) =>
+        si.id === itemId
+          ? {
+              ...si,
+              unit_price: newPrice,
+              subtotal: si.quantity * newPrice,
+            }
+          : si
+      );
+    });
+  };
+
+  const handleRemoveItem = (itemId: string) => {
+    setSelectedItems((prevItems) => prevItems.filter((si) => si.id !== itemId));
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Search Input for Raw Materials */}
+      <div>
+        <label
+          htmlFor="raw_material_search"
+          className="block text-sm font-body text-deep-mocha mb-1"
+        >
+          Cari Bahan Baku
+        </label>
+        <input
+          type="text"
+          id="raw_material_search"
+          ref={searchInputRef}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full p-2 border border-warm-brown rounded-md bg-light-cream text-deep-mocha focus:ring-deep-mocha focus:border-deep-mocha"
+          placeholder="Cari nama bahan baku..."
+        />
+        {loadingSearch && (
+          <p className="text-xs text-warm-brown mt-1">Mencari...</p>
+        )}
+      </div>
+
+      {/* Search Results */}
+      {searchResults.length > 0 && (
+        <div className="border border-clay-pink rounded-md max-h-40 overflow-y-auto bg-white shadow-inner">
+          {searchResults.map((item) => (
+            <div
+              key={item.id}
+              onClick={() => handleAddItem(item)}
+              className="flex items-center p-2 border-b border-clay-pink/50 last:border-b-0 hover:bg-clay-pink/50 cursor-pointer"
+            >
+              <div className="flex-grow text-deep-mocha">
+                <p className="font-body text-sm">
+                  {item.name} ({item.unit})
+                </p>
+                {item.last_purchase_price !== null && (
+                  <p className="text-xs text-warm-brown">
+                    Harga terakhir:{" "}
+                    {item.last_purchase_price.toLocaleString("id-ID", {
+                      style: "currency",
+                      currency: "IDR",
+                    })}
+                    /{item.unit}
+                  </p>
+                )}
+              </div>
+              <PlusCircleIcon className="h-5 w-5 text-deep-mocha" />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Selected Items List */}
+      <h3 className="text-lg font-display lowercase text-deep-mocha mt-6">
+        item pembelian
+      </h3>
+      {selectedItems.length === 0 ? (
+        <p className="text-warm-brown text-sm">
+          Belum ada item yang ditambahkan.
+        </p>
+      ) : (
+        <div className="border border-warm-brown rounded-md overflow-hidden">
+          {selectedItems.map((item) => (
+            <div
+              key={item.id}
+              className="flex items-center p-3 border-b border-clay-pink/50 last:border-b-0 bg-light-cream"
+            >
+              <div className="flex-grow text-deep-mocha">
+                <p className="font-body text-base">
+                  {item.raw_material_name} ({item.unit})
+                </p>
+                <div className="flex items-center text-xs text-warm-brown mt-1">
+                  <span className="mr-1">Harga Satuan:</span>
+                  <input
+                    type="number"
+                    step="any"
+                    value={item.unit_price}
+                    onChange={(e) =>
+                      handleUnitPriceChange(item.id, parseFloat(e.target.value))
+                    }
+                    className="w-24 p-1 border border-clay-pink rounded-md bg-light-cream text-deep-mocha focus:ring-deep-mocha focus:border-deep-mocha text-right"
+                  />
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <button
+                  type="button"
+                  onClick={() => handleQuantityChange(item.id, -1)}
+                  className="p-1 rounded-full text-warm-brown hover:bg-clay-pink"
+                >
+                  <MinusCircleIcon className="h-5 w-5" />
+                </button>
+                <span className="font-body text-sm font-semibold">
+                  {item.quantity}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => handleQuantityChange(item.id, 1)}
+                  className="p-1 rounded-full text-warm-brown hover:bg-clay-pink"
+                >
+                  <PlusCircleIcon className="h-5 w-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveItem(item.id)}
+                  className="p-1 rounded-full text-red-500 hover:bg-red-100"
+                >
+                  <XMarkIcon className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

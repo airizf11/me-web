@@ -16,7 +16,7 @@ const bottomNavItems = [
   { name: "Menu", href: "/mudir/menus", icon: ListBulletIcon },
   { name: "Carousel", href: "/mudir/carousel", icon: PhotoIcon },
   { name: "Penjualan", href: "/mudir/transactions", icon: ShoppingCartIcon },
-  { name: "Assets", href: "/mudir/assets", icon: FolderIcon },
+  { name: "Aset", href: "/mudir/assets", icon: FolderIcon },
   // Tambah link lain (misal 'Settings')
 ];
 

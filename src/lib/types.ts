@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/lib/types.ts
 export type MenuItem = {
   id: string;
@@ -51,7 +50,7 @@ export type Transaction = {
   screenshot_url: string | null;
   type: "sale" | "purchase";
   status: string;
-  purchase_items_json?: any | null;
+  purchase_items_json?: PurchaseItem[] | null;
   created_at: string;
   updated_at: string;
   items?: TransactionItem[];
@@ -68,9 +67,27 @@ export type TransactionItem = {
 };
 
 export type PurchaseItem = {
-  description: string;
+  id?: string; // ID unik lokal untuk UI
+  type: "raw_material" | "custom"; // Tipe item
+  raw_material_id?: string; // Opsional: hanya jika type='raw_material'
+  raw_material_name: string; // Nama bahan baku/item
   quantity: number;
-  unit_price: number;
+  unit: string; // Satuan pembelian
+  unit_price: number; // Harga satuan saat pembelian
+  subtotal?: number; // Total harga per item
+  custom_description?: string; // Deskripsi tambahan untuk item kustom
+  custom_category?: string;
+};
+
+export type RawMaterial = {
+  id: string;
+  name: string;
+  unit: string;
+  current_stock: number;
+  last_purchase_price: number | null;
+  supplier: string | null;
+  created_at: string;
+  updated_at: string;
 };
 
 export type Quote = {
