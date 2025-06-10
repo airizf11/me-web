@@ -21,7 +21,7 @@ export default function CheckoutPlaceholderPage() {
     <section className="container mx-auto p-8 py-20 bg-light-cream text-center min-h-[calc(100vh-200px)] flex flex-col items-center justify-center">
       <SparklesIcon className="h-20 w-20 text-deep-mocha mb-6 animate-pulse" />
       <h1 className="text-4xl font-display lowercase text-deep-mocha mb-4">
-        pesananmu sedang dalam perjalanan (segera)!
+        Pesananmu sedang dalam perjalanan (segera)!
       </h1>
       <p className="text-xl font-body text-warm-brown max-w-3xl mx-auto mb-8">
         Fitur pemesanan langsung dari website "Menurutmu" sedang dalam tahap

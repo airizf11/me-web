@@ -64,7 +64,6 @@ export function AssetGrid({ assets }: AssetGridProps) {
             </div>
           )}
 
-          {/* Overlay aksi */}
           <div className="absolute inset-0 bg-deep-mocha bg-opacity-70 flex items-center justify-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
               type="button"
@@ -76,7 +75,6 @@ export function AssetGrid({ assets }: AssetGridProps) {
             </button>
           </div>
 
-          {/* Nama file di bawah */}
           <div className="absolute bottom-0 left-0 right-0 bg-deep-mocha bg-opacity-70 text-light-cream text-xs p-1 truncate">
             {asset.name}
           </div>

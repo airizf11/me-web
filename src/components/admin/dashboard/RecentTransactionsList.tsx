@@ -1,7 +1,7 @@
 // src/components/admin/dashboard/RecentTransactionsList.tsx
 import Link from "next/link";
 import { type Transaction } from "@/lib/types";
-import { ArrowRightIcon } from "@heroicons/react/24/outline"; // Ikon
+import { ArrowRightIcon } from "@heroicons/react/24/outline";
 
 type RecentTransactionsListProps = {
   transactions: Transaction[];

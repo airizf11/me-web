@@ -15,7 +15,7 @@ export default function BlogPage() {
     <section className="container mx-auto p-8 py-20 bg-light-cream text-center min-h-[calc(100vh-200px)] flex flex-col items-center justify-center">
       <PencilSquareIcon className="h-20 w-20 text-deep-mocha mb-6 animate-pulse" />
       <h1 className="text-4xl font-display lowercase text-deep-mocha mb-4">
-        ruang refleksi kita
+        Ruang Refleksi Kita
       </h1>
       <p className="text-xl font-body text-warm-brown max-w-3xl mx-auto mb-8">
         "Menurutmu, apa yang sedang kita renungkan hari ini?"

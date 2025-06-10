@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { type CarouselSlide } from "@/lib/types";
-import { CarouselTable } from "@/components/admin/carousel/CarouselTable"; // Import CarouselTable
+import { CarouselTable } from "@/components/admin/carousel/CarouselTable";
 
 export const metadata: Metadata = {
   title: "Manajemen Carousel - Mudir Menurutmu",
@@ -22,7 +22,7 @@ export default async function CarouselManagementPage() {
       .from("carousel_slides")
       .select("*")
       .order("order_index", { ascending: true })
-      .order("created_at", { ascending: false }); // Urutkan juga berdasarkan waktu pembuatan
+      .order("created_at", { ascending: false });
 
     if (dbError) {
       throw dbError;
@@ -39,7 +39,6 @@ export default async function CarouselManagementPage() {
         Manajemen Carousel
       </h1>
 
-      {/* Tombol Tambah Slide Baru */}
       <div className="flex justify-end mb-6">
         <Link
           href="/mudir/carousel/create"
@@ -49,7 +48,6 @@ export default async function CarouselManagementPage() {
         </Link>
       </div>
 
-      {/* Bagian Daftar Slide */}
       <div className="bg-light-cream p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-2xl font-display lowercase text-deep-mocha mb-4">
           Daftar Slide

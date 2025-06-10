@@ -43,7 +43,6 @@ export function MenuForm({ initialData }: MenuFormProps) {
   );
   const [orderIndex, setOrderIndex] = useState(initialData?.order_index || 0);
 
-  // PENTING: Inisialisasi additionalImages dengan array kosong jika null/undefined/bukan array
   const [additionalImages, setAdditionalImages] = useState<string[]>(
     Array.isArray(initialData?.additional_images)
       ? initialData.additional_images
@@ -64,7 +63,6 @@ export function MenuForm({ initialData }: MenuFormProps) {
     setCategory(initialData?.category || "Coffee");
     setIsAvailable(initialData?.is_available ?? true);
     setOrderIndex(initialData?.order_index || 0);
-    // PENTING: Pastikan ini selalu array saat reset
     setAdditionalImages(
       Array.isArray(initialData?.additional_images)
         ? initialData.additional_images
@@ -98,17 +96,14 @@ export function MenuForm({ initialData }: MenuFormProps) {
         currentAdditionalImageIndex !== null &&
         prevImages[currentAdditionalImageIndex] !== undefined
       ) {
-        // Edit gambar yang sudah ada
         const newImages = [...prevImages];
         if (url) {
           newImages[currentAdditionalImageIndex] = url;
         } else {
-          // Hapus jika URL null
           newImages.splice(currentAdditionalImageIndex, 1);
         }
         return newImages;
       } else if (url) {
-        // Tambah gambar baru
         return [...prevImages, url];
       }
       return prevImages;
@@ -166,7 +161,6 @@ export function MenuForm({ initialData }: MenuFormProps) {
 
   return (
     <form ref={formRef} action={handleSubmit} className="space-y-6">
-      {/* Basic Details */}
       <div>
         <label
           htmlFor="name"
@@ -255,7 +249,6 @@ export function MenuForm({ initialData }: MenuFormProps) {
         )}
       </div>
 
-      {/* --- Gambar Utama --- */}
       <div className="my-6">
         <label className="block text-sm font-body text-deep-mocha mb-2">
           Gambar Utama Menu
@@ -269,14 +262,11 @@ export function MenuForm({ initialData }: MenuFormProps) {
         />
       </div>
 
-      {/* --- Gambar Tambahan --- */}
       <div className="my-6 border border-warm-brown rounded-lg p-4 bg-light-cream">
         <h3 className="text-lg font-display lowercase text-deep-mocha mb-4">
-          gambar tambahan
+          Gambar Tambahan
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
-          {/* PENTING: Pastikan additionalImages selalu array sebelum memanggil .map() */}
-          {/* Menggunakan Array.isArray untuk verifikasi runtime */}
           {(Array.isArray(additionalImages) ? additionalImages : []).map(
             (imgUrl, index) => (
               <div
@@ -310,7 +300,6 @@ export function MenuForm({ initialData }: MenuFormProps) {
               </div>
             )
           )}
-          {/* Tombol Tambah Gambar */}
           <button
             type="button"
             onClick={handleAddAdditionalImage}
@@ -327,7 +316,6 @@ export function MenuForm({ initialData }: MenuFormProps) {
         )}
       </div>
 
-      {/* Modal untuk AssetManager Gambar Tambahan */}
       {showAdditionalImageModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-light-cream p-6 rounded-lg shadow-2xl w-full max-w-2xl relative">
@@ -357,9 +345,7 @@ export function MenuForm({ initialData }: MenuFormProps) {
           </div>
         </div>
       )}
-      {/* End Modal */}
 
-      {/* Other Details */}
       <div>
         <label
           htmlFor="category"

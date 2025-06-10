@@ -3,7 +3,13 @@
 
 import Link from "next/link";
 import { Fragment, useState, useEffect } from "react";
-import { Popover, Transition } from "@headlessui/react";
+import {
+  Popover,
+  PopoverButton,
+  PopoverGroup,
+  PopoverPanel,
+  Transition,
+} from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import { usePathname } from "next/navigation";
@@ -11,8 +17,8 @@ import { usePathname } from "next/navigation";
 const navigation = [
   { name: "Home", href: "/" },
   { name: "Menu", href: "/menu" },
-  { name: "Tentang Kami", href: "/about" },
   { name: "Kontak", href: "/contact" },
+  { name: "Tentang Kami", href: "/about" },
 ];
 
 export function Navbar() {
@@ -30,8 +36,8 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // PENTING: Logika baru untuk isHeroPage
-  const isHeroPage = pathname === "/" || pathname.startsWith("/menu/"); // Efek berlaku untuk Home dan halaman detail Menu
+  const isHeroPage =
+    pathname === "/" || pathname.startsWith("/menu/") || pathname === "/menu";
   const scrollThreshold = isHeroPage ? heroHeight * 0.7 : 0;
 
   const opacity = isHeroPage ? Math.min(1, scrollY / scrollThreshold) : 1;
@@ -64,7 +70,6 @@ export function Navbar() {
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex items-center justify-between py-6 md:justify-start md:space-x-10">
-          {/* Logo Brand */}
           <div className="flex justify-start lg:w-0 lg:flex-1">
             <Link
               href="/"
@@ -77,9 +82,8 @@ export function Navbar() {
             </Link>
           </div>
 
-          {/* Tombol Hamburger Menu (Mobile Only) */}
           <div className="-my-2 -mr-2 md:hidden">
-            <Popover.Button
+            <PopoverButton
               className={clsx(
                 "relative inline-flex items-center justify-center rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-inset",
                 isHeroPage && !isSolid
@@ -89,11 +93,10 @@ export function Navbar() {
             >
               <span className="sr-only">Open menu</span>
               <Bars3Icon className="h-6 w-6" aria-hidden="true" />
-            </Popover.Button>
+            </PopoverButton>
           </div>
 
-          {/* Navigasi Desktop */}
-          <Popover.Group as="nav" className="hidden space-x-10 md:flex">
+          <PopoverGroup as="nav" className="hidden space-x-10 md:flex">
             {navigation.map((item) => (
               <Link
                 key={item.name}
@@ -107,9 +110,8 @@ export function Navbar() {
                 {item.name}
               </Link>
             ))}
-          </Popover.Group>
+          </PopoverGroup>
 
-          {/* Tombol CTA Order (Desktop) */}
           <div className="hidden items-center justify-end md:flex md:flex-1 lg:w-0">
             <Link
               href="/checkout"
@@ -126,7 +128,6 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Panel Menu Mobile (Full Screen Overlay) */}
       <Transition
         as={Fragment}
         enter="duration-200 ease-out"
@@ -136,7 +137,7 @@ export function Navbar() {
         leaveFrom="opacity-100 scale-100"
         leaveTo="opacity-0 scale-95"
       >
-        <Popover.Panel
+        <PopoverPanel
           focus
           className="absolute inset-x-0 top-0 z-10 origin-top-right transform p-2 transition md:hidden"
         >
@@ -144,21 +145,18 @@ export function Navbar() {
             <div className="divide-y-2 divide-warm-brown rounded-lg bg-deep-mocha shadow-lg ring-1 ring-black ring-opacity-5">
               <div className="px-5 pb-6 pt-5">
                 <div className="flex items-center justify-between">
-                  {/* Logo di Panel Mobile */}
                   <div>
                     <h1 className="text-3xl font-display lowercase leading-none text-light-cream">
                       menurutmu
                     </h1>
                   </div>
-                  {/* Tombol Tutup Menu Mobile */}
                   <div className="-mr-2">
-                    <Popover.Button className="relative inline-flex items-center justify-center rounded-md bg-deep-mocha p-2 text-light-cream hover:bg-warm-brown focus:outline-none focus:ring-2 focus:ring-inset focus:ring-light-cream">
+                    <PopoverButton className="relative inline-flex items-center justify-center rounded-md bg-deep-mocha p-2 text-light-cream hover:bg-warm-brown focus:outline-none focus:ring-2 focus:ring-inset focus:ring-light-cream">
                       <span className="sr-only">Close menu</span>
                       <XMarkIcon className="h-6 w-6" aria-hidden="true" />
-                    </Popover.Button>
+                    </PopoverButton>
                   </div>
                 </div>
-                {/* Navigasi di Panel Mobile */}
                 <div className="mt-6">
                   <nav className="grid gap-y-8">
                     {navigation.map((item) => (
@@ -176,7 +174,6 @@ export function Navbar() {
                   </nav>
                 </div>
               </div>
-              {/* CTA Order di Panel Mobile (opsional) */}
               <div className="space-y-6 px-5 py-6">
                 <div>
                   <Link
@@ -190,7 +187,7 @@ export function Navbar() {
               </div>
             </div>
           )}
-        </Popover.Panel>
+        </PopoverPanel>
       </Transition>
     </Popover>
   );

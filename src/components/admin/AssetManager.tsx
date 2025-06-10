@@ -68,7 +68,6 @@ export function AssetManager({
     }
   }, [initialAssetUrl]);
 
-  // --- Gallery Logic ---
   const fetchGalleryFiles = async () => {
     setLoadingGallery(true);
     setGalleryFiles([]);
@@ -153,7 +152,7 @@ export function AssetManager({
           cacheControl: "3600",
           upsert: false,
           // opsional progress bar real-time
-          // namun butuh custom upload endpoint/streaming.
+          // butuh custom upload endpoint/streaming.
           // onUploadProgress: (event) => {
           //   if (event.lengthComputable) {
           //     const percentCompleted = Math.round((event.loaded * 100) / event.total);

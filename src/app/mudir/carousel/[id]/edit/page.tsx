@@ -8,7 +8,7 @@ import { notFound } from "next/navigation";
 
 interface EditCarouselPageProps {
   params?: Promise<{
-    id: string; // ID slide dari URL
+    id: string;
   }>;
 }
 
@@ -78,7 +78,7 @@ export default async function EditCarouselSlidePage({
     return (
       <div className="p-4 md:p-8">
         <h1 className="text-3xl font-display lowercase text-deep-mocha mb-6">
-          edit slide
+          Edit Slide
         </h1>
         <div className="bg-red-100 border border-red-400 text-red-700 p-4 rounded-lg">
           {error}
@@ -94,7 +94,7 @@ export default async function EditCarouselSlidePage({
   return (
     <div className="p-4 md:p-8">
       <h1 className="text-3xl font-display lowercase text-deep-mocha mb-6">
-        edit slide
+        Edit Slide
       </h1>
 
       <div className="bg-light-cream p-6 rounded-lg shadow-md">

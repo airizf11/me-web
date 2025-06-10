@@ -8,11 +8,10 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { z } from "zod";
 import { type Transaction, type PurchaseItem } from "@/lib/types";
 
-// PENTING: Skema untuk item pembelian yang lebih fleksibel
 const PurchaseItemInputSchema = z.object({
-  id: z.string().optional(), // ID lokal dari UI
-  type: z.enum(["raw_material", "custom"]), // Tipe item
-  raw_material_id: z.string().uuid("ID Bahan Baku tidak valid.").optional(), // Hanya jika type='raw_material'
+  id: z.string().optional(),
+  type: z.enum(["raw_material", "custom"]),
+  raw_material_id: z.string().uuid("ID Bahan Baku tidak valid.").optional(),
   raw_material_name: z.string().min(1, "Nama item tidak boleh kosong."),
   quantity: z.number().int().min(1, "Kuantitas harus minimal 1."),
   unit: z
@@ -20,12 +19,10 @@ const PurchaseItemInputSchema = z.object({
     .min(1, "Satuan tidak boleh kosong.")
     .max(20, "Satuan terlalu panjang."),
   unit_price: z.number().min(0, "Harga satuan tidak boleh negatif."),
-  // Subtotal tidak perlu divalidasi di sini karena dihitung di client/server
-  purchase_category_custom: z.string().optional().nullable(), // Jika ada kategori kustom
-  description_custom: z.string().optional().nullable(), // Jika ada deskripsi kustom
+  purchase_category_custom: z.string().optional().nullable(),
+  description_custom: z.string().optional().nullable(),
 });
 
-// Skema untuk transaksi pembelian (tetap sama)
 const PurchaseTransactionSchema = z.object({
   id: z.string().uuid().optional(),
   transaction_timestamp: z
@@ -81,7 +78,6 @@ const PurchaseTransactionSchema = z.object({
   }),
 });
 
-// --- CREATE PURCHASE TRANSACTION ---
 export async function createPurchaseTransaction(formData: FormData) {
   const supabase = await createServerSupabaseClient();
 
@@ -133,7 +129,7 @@ export async function createPurchaseTransaction(formData: FormData) {
     .insert([
       {
         ...transactionData,
-        purchase_items_json: items, // Simpan item sebagai JSONB
+        purchase_items_json: items,
       },
     ])
     .select("id")
@@ -156,7 +152,6 @@ export async function createPurchaseTransaction(formData: FormData) {
   return { success: true, message: "Transaksi pembelian berhasil dicatat!" };
 }
 
-// --- UPDATE PURCHASE TRANSACTION ---
 export async function updatePurchaseTransaction(
   id: string,
   formData: FormData
@@ -240,7 +235,6 @@ export async function updatePurchaseTransaction(
   };
 }
 
-// --- DELETE PURCHASE TRANSACTION ---
 export async function deletePurchaseTransaction(id: string) {
   const supabase = await createServerSupabaseClient();
 

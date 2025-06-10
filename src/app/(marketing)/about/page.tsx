@@ -13,18 +13,17 @@ export default function AboutPage() {
   return (
     <section className="container mx-auto p-8 py-20 bg-light-cream">
       <h1 className="text-4xl font-display lowercase text-deep-mocha mb-8 text-center">
-        tentang menurutmu
+        Tentang menurutmu
       </h1>
 
       <div className="max-w-4xl mx-auto space-y-8 text-deep-mocha font-body leading-relaxed">
         <div className="bg-warm-brown text-light-cream p-6 rounded-lg shadow-md">
           <h2 className="text-2xl font-display lowercase mb-4">Visi</h2>
           <p>
-            Menjadi brand minuman reflektif yang tidak sekadar menyegarkan, tapi
-            juga mengajak konsumen berpikir dan berdialog — satu cup, satu
-            makna. Kami percaya setiap tegukan adalah momen untuk merenung,
-            menemukan inspirasi, dan terhubung dengan diri sendiri serta dunia
-            di sekitar.
+            Menjadi brand reflektif yang tidak sekadar menyegarkan, tapi juga
+            mengajak konsumen berpikir dan berdialog — satu cup, satu makna.
+            Kami percaya setiap tegukan adalah momen untuk merenung, menemukan
+            inspirasi, dan terhubung dengan diri sendiri serta dunia di sekitar.
           </p>
         </div>
 

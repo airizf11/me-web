@@ -3,7 +3,7 @@
 import { Metadata } from "next";
 import { createServerSupabaseClientReadOnly } from "@/lib/supabase/server";
 import { type MenuItem } from "@/lib/types";
-import { MenuCategorySection } from "@/components/marketing/MenuCategorySection"; // Import komponen baru
+import { MenuCategorySection } from "@/components/marketing/MenuCategorySection";
 
 export const metadata: Metadata = {
   title: "Menu Menurutmu - Temukan Pilihanmu",
@@ -21,7 +21,7 @@ export default async function MenuPage() {
     const { data, error: dbError } = await supabase
       .from("menus")
       .select("*")
-      .eq("is_available", true) // Hanya tampilkan menu yang tersedia
+      .eq("is_available", true)
       .order("order_index", { ascending: true })
       .order("name", { ascending: true });
 
@@ -34,23 +34,21 @@ export default async function MenuPage() {
     error = "Gagal memuat daftar menu. Silakan coba lagi nanti.";
   }
 
-  // --- Logika Pengelompokan Berdasarkan Kategori ---
   const categorizedMenus: { [category: string]: MenuItem[] } = {};
   menuItems.forEach((item) => {
-    const categoryName = item.category || "Lain-lain"; // Default jika kategori kosong
+    const categoryName = item.category || "Lain-lain";
     if (!categorizedMenus[categoryName]) {
       categorizedMenus[categoryName] = [];
     }
     categorizedMenus[categoryName].push(item);
   });
 
-  // Urutkan kategori (opsional, misal abjad atau custom order)
   const sortedCategories = Object.keys(categorizedMenus).sort();
 
   return (
     <section className="container mx-auto p-8 py-20 bg-light-cream">
       <h1 className="text-4xl font-display lowercase text-deep-mocha mb-8 text-center">
-        menu menurutmu
+        Menu Menurutmu
       </h1>
       <p className="text-lg font-body text-warm-brown text-center mb-12 max-w-2xl mx-auto">
         Setiap tegukan adalah ajakan untuk merenung. Jelajahi pilihan minuman
@@ -68,7 +66,6 @@ export default async function MenuPage() {
       ) : (
         <div className="space-y-16">
           {" "}
-          {/* Spasi antar section kategori */}
           {sortedCategories.map((category) => (
             <MenuCategorySection
               key={category}
@@ -79,14 +76,13 @@ export default async function MenuPage() {
         </div>
       )}
 
-      {/* CTA Order di bagian bawah menu (tetap ada) */}
       <div className="mt-16 text-center">
         <h2 className="text-2xl font-display text-deep-mocha mb-6 lowercase">
-          siap memesan?
+          Siap Memesan?
         </h2>
         <div className="flex flex-wrap justify-center gap-4">
           <a
-            href="#" // Ganti dengan link WhatsApp Bisnis Anda
+            href="#"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-deep-mocha text-light-cream px-8 py-3 rounded-full hover:bg-warm-brown transition-colors duration-300 font-body text-lg"
@@ -94,7 +90,7 @@ export default async function MenuPage() {
             Order via WhatsApp
           </a>
           <a
-            href="#" // Ganti dengan link GoFood Anda
+            href="#"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-deep-mocha text-light-cream px-8 py-3 rounded-full hover:bg-warm-brown transition-colors duration-300 font-body text-lg"
@@ -102,7 +98,7 @@ export default async function MenuPage() {
             Order via GoFood
           </a>
           <a
-            href="#" // Ganti dengan link GrabFood Anda
+            href="#"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-deep-mocha text-light-cream px-8 py-3 rounded-full hover:bg-warm-brown transition-colors duration-300 font-body text-lg"
@@ -110,7 +106,7 @@ export default async function MenuPage() {
             Order via GrabFood
           </a>
           <a
-            href="#" // Ganti dengan link ShopeeFood Anda
+            href="#"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-deep-mocha text-light-cream px-8 py-3 rounded-full hover:bg-warm-brown transition-colors duration-300 font-body text-lg"

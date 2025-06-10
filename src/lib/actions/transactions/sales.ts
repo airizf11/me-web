@@ -12,14 +12,12 @@ import {
   type MenuItem,
 } from "@/lib/types";
 
-// Skema untuk item dalam transaksi yang dikirim dari form (Client Component)
 const TransactionItemInputSchema = z.object({
   menu_item_id: z.string().uuid("ID Menu tidak valid."),
   quantity: z.number().int().min(1, "Kuantitas harus minimal 1."),
   price_at_transaction: z.number().min(0, "Harga tidak boleh negatif."),
 });
 
-// Skema untuk transaksi penjualan
 const SalesTransactionSchema = z.object({
   id: z.string().uuid().optional(),
   transaction_timestamp: z
@@ -80,9 +78,7 @@ const SalesTransactionSchema = z.object({
     .optional()
     .nullable(),
 
-  // Tipe transaksi ini adalah 'sale'
   type: z.literal("sale").default("sale"),
-  // Status transaksi sale (misal, 'completed')
   status: z.string().default("completed"),
 
   items: z.string().transform((str, ctx) => {
@@ -109,7 +105,6 @@ const SalesTransactionSchema = z.object({
   }),
 });
 
-// --- CREATE SALES TRANSACTION ---
 export async function createSalesTransaction(formData: FormData) {
   const supabase = await createServerSupabaseClient();
 
@@ -147,8 +142,8 @@ export async function createSalesTransaction(formData: FormData) {
     is_pickup: isPickup,
     screenshot_url: screenshotUrl || null,
     items: itemsJson,
-    type: "sale", // Pastikan type-nya 'sale'
-    status: "completed", // Default status
+    type: "sale",
+    status: "completed",
   });
 
   if (!validatedFields.success) {
@@ -213,23 +208,21 @@ export async function createSalesTransaction(formData: FormData) {
     };
   }
 
-  revalidatePath("/mudir/transactions"); // Revalidasi halaman daftar transaksi umum
-  revalidatePath("/mudir"); // Update dashboard
+  revalidatePath("/mudir/transactions");
+  revalidatePath("/mudir");
   return { success: true, message: "Transaksi penjualan berhasil dicatat!" };
 }
 
-// --- UPDATE SALES TRANSACTION (placeholder, jika nanti ada) ---
+// UPDATE SALES placeholder
 export async function updateSalesTransaction(id: string, formData: FormData) {
-  // Implementasi mirip create, tapi pakai .update().eq('id', id)
   return {
     success: false,
     message: "Fitur update transaksi penjualan belum diimplementasikan.",
   };
 }
 
-// --- DELETE SALES TRANSACTION (placeholder, jika nanti ada) ---
+// DELETE SALES placeholder
 export async function deleteSalesTransaction(id: string) {
-  // Implementasi delete transaksi dan itemnya
   return {
     success: false,
     message: "Fitur hapus transaksi penjualan belum diimplementasikan.",

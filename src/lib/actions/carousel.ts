@@ -33,12 +33,7 @@ const CarouselSlideSchema = z.object({
     .max(50, "Teks tombol terlalu panjang.")
     .optional()
     .nullable(),
-  button_link: z
-    .string()
-    .url("Link tombol tidak valid.")
-    .or(z.literal(""))
-    .optional()
-    .nullable(),
+  button_link: z.string().or(z.literal("")).optional().nullable(),
   order_index: z
     .number()
     .int()

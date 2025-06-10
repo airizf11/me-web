@@ -13,7 +13,7 @@ import {
 import {
   deleteCarouselSlide,
   toggleCarouselSlideAvailability,
-} from "@/lib/actions/carousel"; // Import Server Actions
+} from "@/lib/actions/carousel";
 import toast from "react-hot-toast";
 
 type CarouselTableProps = {

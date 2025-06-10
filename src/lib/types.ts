@@ -67,15 +67,15 @@ export type TransactionItem = {
 };
 
 export type PurchaseItem = {
-  id?: string; // ID unik lokal untuk UI
-  type: "raw_material" | "custom"; // Tipe item
-  raw_material_id?: string; // Opsional: hanya jika type='raw_material'
-  raw_material_name: string; // Nama bahan baku/item
+  id?: string;
+  type: "raw_material" | "custom";
+  raw_material_id?: string;
+  raw_material_name: string;
   quantity: number;
-  unit: string; // Satuan pembelian
-  unit_price: number; // Harga satuan saat pembelian
-  subtotal?: number; // Total harga per item
-  custom_description?: string; // Deskripsi tambahan untuk item kustom
+  unit: string;
+  unit_price: number;
+  subtotal?: number;
+  custom_description?: string;
   custom_category?: string;
 };
 

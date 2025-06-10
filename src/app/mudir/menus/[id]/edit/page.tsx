@@ -8,14 +8,13 @@ import { notFound } from "next/navigation";
 
 interface EditMenuPageProps {
   params?: Promise<{
-    id: string; // ID menu dari URL
+    id: string;
   }>;
 }
 
 export async function generateMetadata({
   params,
 }: EditMenuPageProps): Promise<Metadata> {
-  // Secara paksa ekstrak nilai dari Promise (hati-hati!)
   const resolvedParams = await params;
   const id = resolvedParams?.id;
 
@@ -44,13 +43,12 @@ export async function generateMetadata({
 }
 
 export default async function EditMenuPage({ params }: EditMenuPageProps) {
-  // Secara paksa ekstrak nilai dari Promise
   const resolvedParams = await params;
   const id = resolvedParams?.id;
 
   if (!id) {
     notFound();
-    return null; // Untuk memuaskan tipe
+    return null;
   }
 
   const supabase = await createServerSupabaseClient();
@@ -80,7 +78,7 @@ export default async function EditMenuPage({ params }: EditMenuPageProps) {
     return (
       <div className="p-4 md:p-8">
         <h1 className="text-3xl font-display lowercase text-deep-mocha mb-6">
-          edit menu
+          Edit Menu
         </h1>
         <div className="bg-red-100 border border-red-400 text-red-700 p-4 rounded-lg">
           {error}
@@ -96,7 +94,7 @@ export default async function EditMenuPage({ params }: EditMenuPageProps) {
   return (
     <div className="p-4 md:p-8">
       <h1 className="text-3xl font-display lowercase text-deep-mocha mb-6">
-        edit menu
+        Edit Menu
       </h1>
 
       <div className="bg-light-cream p-6 rounded-lg shadow-md">

@@ -77,7 +77,7 @@ export default function ContactPage() {
           </div>
         </div>
 
-        {/* Placeholder untuk Form Kontak (opsional, jika ingin form langsung di website) */}
+        {/* Placeholder */}
         <div className="mt-12 bg-light-cream p-6 rounded-lg shadow-md border border-warm-brown text-left text-deep-mocha">
           <h2 className="text-2xl font-display lowercase mb-4 text-center">
             Kirim Pesan
@@ -85,7 +85,7 @@ export default function ContactPage() {
           <p className="text-center font-body text-warm-brown mb-6">
             Isi formulir di bawah ini dan kami akan segera membalasnya.
           </p>
-          {/* Formulir kontak sederhana (placeholder) */}
+          {/* placeholder */}
           <form className="space-y-4 font-body">
             <div>
               <label htmlFor="name" className="block text-sm mb-1">

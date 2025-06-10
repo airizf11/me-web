@@ -6,7 +6,6 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { z } from "zod";
 import { type RawMaterial } from "@/lib/types";
 
-// Skema validasi untuk Bahan Baku
 const RawMaterialSchema = z.object({
   id: z.string().uuid().optional(),
   name: z
@@ -30,7 +29,6 @@ const RawMaterialSchema = z.object({
     .nullable(),
 });
 
-// --- CREATE RAW MATERIAL ---
 export async function createRawMaterial(formData: FormData) {
   const supabase = await createServerSupabaseClient();
 
@@ -83,7 +81,6 @@ export async function createRawMaterial(formData: FormData) {
   };
 }
 
-// --- UPDATE RAW MATERIAL ---
 export async function updateRawMaterial(id: string, formData: FormData) {
   const supabase = await createServerSupabaseClient();
 
@@ -139,7 +136,6 @@ export async function updateRawMaterial(id: string, formData: FormData) {
   };
 }
 
-// --- DELETE RAW MATERIAL ---
 export async function deleteRawMaterial(id: string) {
   const supabase = await createServerSupabaseClient();
 
@@ -157,7 +153,6 @@ export async function deleteRawMaterial(id: string) {
   return { success: true, message: "Bahan baku berhasil dihapus." };
 }
 
-// --- GET RAW MATERIALS FOR SELECTOR (tetap sama) ---
 export async function getRawMaterialsForSelector(search: string = "") {
   const supabase = await createServerSupabaseClient();
   let query = supabase
@@ -183,7 +178,6 @@ export async function getRawMaterialsForSelector(search: string = "") {
   };
 }
 
-// --- GET RAW MATERIAL BY ID (untuk halaman edit) ---
 export async function getRawMaterialById(id: string) {
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase

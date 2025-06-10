@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  CalculatorIcon,
   Cog6ToothIcon,
   CubeIcon,
   FolderIcon,
@@ -21,7 +22,6 @@ const adminNavItems = [
   { name: "Dashboard", href: "/mudir", icon: HomeIcon },
   { name: "Manajemen Menu", href: "/mudir/menus", icon: ListBulletIcon },
   { name: "Manajemen Carousel", href: "/mudir/carousel", icon: PhotoIcon },
-  // Tambah link lain
   {
     name: "Catatan Penjualan",
     href: "/mudir/transactions",
@@ -38,6 +38,11 @@ const adminNavItems = [
     icon: CubeIcon,
   },
   { name: "Manajemen Aset", href: "/mudir/assets", icon: FolderIcon },
+  {
+    name: "Kalkulator HPP",
+    href: "/mudir/hpp-calculator",
+    icon: CalculatorIcon,
+  },
   { name: "Pengaturan", href: "/mudir/settings", icon: Cog6ToothIcon },
 ];
 
@@ -106,7 +111,7 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                       href="/mudir"
                       className="text-3xl font-display lowercase leading-none text-light-cream"
                     >
-                      menurutmu Admin
+                      Menu Admin
                     </Link>
                   </div>
                   <nav className="flex flex-1 flex-col">
@@ -155,7 +160,7 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
               href="/mudir"
               className="text-3xl font-display lowercase leading-none text-light-cream"
             >
-              menurutmu Admin
+              Menu Admin
             </Link>
           </div>
           <nav className="flex flex-1 flex-col">

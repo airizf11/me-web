@@ -1,12 +1,12 @@
 // src/components/admin/dashboard/StatisticCard.tsx
 import React from "react";
-import { ExclamationCircleIcon } from "@heroicons/react/24/outline"; // Ikon error
+import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 
 type StatisticCardProps = {
   title: string;
   value: string;
   description?: string;
-  icon: React.ElementType; // Icon component dari Heroicons
+  icon: React.ElementType;
   error?: string | null;
 };
 

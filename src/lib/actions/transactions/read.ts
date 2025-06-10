@@ -4,7 +4,6 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { type Transaction, type MenuItem } from "@/lib/types";
 
-// --- GET TRANSACTIONS (dengan filter, untuk halaman daftar) ---
 export async function getTransactions(
   filters: {
     period?: "daily" | "weekly" | "monthly" | "all" | "custom";
@@ -12,7 +11,7 @@ export async function getTransactions(
     search?: string;
     startDate?: string;
     endDate?: string;
-    type?: "sale" | "purchase" | "all"; // Filter baru untuk tipe transaksi
+    type?: "sale" | "purchase" | "all";
   } = {}
 ) {
   const supabase = await createServerSupabaseClient();
@@ -32,7 +31,6 @@ export async function getTransactions(
     )
     .order("transaction_timestamp", { ascending: false });
 
-  // Implementasi filtering (contoh sederhana)
   if (
     filters.period &&
     filters.period !== "all" &&
@@ -40,22 +38,20 @@ export async function getTransactions(
   ) {
     const now = new Date();
     let startDate: Date;
-    const endDate: Date = new Date(); // Default to current time for endDate
+    const endDate: Date = new Date();
 
-    // Set time to start/end of day/week/month
-    now.setHours(0, 0, 0, 0); // Reset time to midnight for daily/weekly/monthly calculations
-    endDate.setHours(23, 59, 59, 999); // Set end of day for endDate
+    now.setHours(0, 0, 0, 0);
+    endDate.setHours(23, 59, 59, 999);
 
     if (filters.period === "daily") {
-      startDate = now; // Already set to midnight of current day
+      startDate = now;
     } else if (filters.period === "weekly") {
-      const dayOfWeek = now.getDay(); // 0 for Sunday, 1 for Monday, etc.
-      startDate = new Date(now.setDate(now.getDate() - dayOfWeek)); // Start of the current week (Sunday)
+      const dayOfWeek = now.getDay();
+      startDate = new Date(now.setDate(now.getDate() - dayOfWeek));
     } else if (filters.period === "monthly") {
-      startDate = new Date(now.getFullYear(), now.getMonth(), 1); // First day of current month
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
     } else {
-      // Should not happen with 'all' and 'custom' already filtered
-      startDate = new Date(); // Fallback
+      startDate = new Date();
     }
 
     query = query
@@ -63,10 +59,7 @@ export async function getTransactions(
       .lte("transaction_timestamp", endDate.toISOString());
   }
 
-  // --- FILTER BY CUSTOM DATE RANGE ---
-  // Ini akan menimpa filter period jika period === 'custom'
   if (filters.period === "custom" && filters.startDate && filters.endDate) {
-    // Pastikan endDate mencakup seluruh hari (sampai akhir hari)
     const endOfDay = new Date(filters.endDate);
     endOfDay.setHours(23, 59, 59, 999);
     query = query
@@ -74,21 +67,17 @@ export async function getTransactions(
       .lte("transaction_timestamp", endOfDay.toISOString());
   }
 
-  // --- FILTER BY PLATFORM SOURCE ---
-  // Menggunakan 'platform' dari filter, bukan 'platformSource' (konsistensi)
   if (filters.platform && filters.platform !== "All") {
     query = query.eq("platform_source", filters.platform);
   }
 
-  // --- FILTER BY SEARCH TERM (customer name / food delivery ID) ---
   if (filters.search) {
     const searchTerm = `%${filters.search.toLowerCase()}%`;
     query = query.or(
-      `customer_name.ilike.${searchTerm},customer_food_delivery_id.ilike.${searchTerm}`
+      `customer_name.ilike.${searchTerm},customer_food_delivery_id.ilike.${searchTerm},platform_source.ilike.${searchTerm},notes.ilike.${searchTerm},type.ilike.${searchTerm},delivery_city.ilike.${searchTerm},status.ilike.${searchTerm}`
     );
   }
 
-  // --- FILTER BY TRANSACTION TYPE ---
   if (filters.type && filters.type !== "all") {
     query = query.eq("type", filters.type);
   }
@@ -103,7 +92,6 @@ export async function getTransactions(
   return { data: data as Transaction[], error: null };
 }
 
-// --- GET TRANSACTION DETAILS (untuk halaman detail) ---
 export async function getTransactionDetails(id: string) {
   const supabase = await createServerSupabaseClient();
 
@@ -138,8 +126,6 @@ export async function getTransactionDetails(id: string) {
   return { data: data as Transaction, error: null };
 }
 
-// --- GET MENU ITEMS FOR SELECTOR (Server Action untuk MenuItemSelector) ---
-// PENTING: Fungsi ini yang sebelumnya hilang
 export async function getMenuItemsForSelector(search: string = "") {
   const supabase = await createServerSupabaseClient();
   let query = supabase
@@ -150,7 +136,7 @@ export async function getMenuItemsForSelector(search: string = "") {
   if (search) {
     query = query.ilike("name", `%${search}%`);
   }
-  query = query.order("name", { ascending: true }).limit(10); // Limit hasil pencarian
+  query = query.order("name", { ascending: true }).limit(10);
 
   const { data, error } = await query;
   if (error) {

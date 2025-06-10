@@ -11,34 +11,131 @@ import {
 } from "@/lib/types";
 import { getTransactions } from "./transactions/read";
 
-export async function getTotalSalesSummary(
+function getDateRange(period: "daily" | "weekly" | "monthly" | "all"): {
+  startDate: string | null;
+  endDate: string | null;
+} {
+  const now = new Date();
+  let startDate: Date | null = null;
+  const endDate: Date = new Date();
+
+  endDate.setHours(23, 59, 59, 999);
+
+  if (period === "daily") {
+    startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  } else if (period === "weekly") {
+    const dayOfWeek = now.getDay(); // 0 for Sunday, 1 for Monday, etc.
+    startDate = new Date(now.setDate(now.getDate() - dayOfWeek)); // Start of the current week (Sunday)
+    startDate.setHours(0, 0, 0, 0); // Reset time to midnight
+  } else if (period === "monthly") {
+    startDate = new Date(now.getFullYear(), now.getMonth(), 1); // First day of current month
+    startDate.setHours(0, 0, 0, 0); // Reset time to midnight
+  } else {
+    // 'all'
+    startDate = null;
+  }
+
+  return {
+    startDate: startDate ? startDate.toISOString() : null,
+    endDate: endDate.toISOString(),
+  };
+}
+
+export async function getSalesSummary(
   period: "daily" | "weekly" | "monthly" | "all" = "monthly"
 ) {
   const supabase = await createServerSupabaseClient();
 
-  const { data: sales, error } = await getTransactions({
-    period,
-    type: "sale",
-  });
+  const { startDate, endDate } = getDateRange(period);
+
+  let query = supabase
+    .from("transactions")
+    .select(
+      `
+    total_amount,
+    items:transaction_items (
+        quantity
+    )
+  `
+    )
+    .eq("type", "sale");
+
+  if (startDate) {
+    query = query
+      .gte("transaction_timestamp", startDate)
+      .lte("transaction_timestamp", endDate);
+  }
+
+  const { data: sales, error } = await query;
 
   if (error) {
-    console.error("Error getting total sales summary:", error);
+    console.error(`Error getting sales summary for ${period}:`, error);
     return {
       totalAmount: 0,
+      totalPcs: 0,
       count: 0,
-      error: `Gagal memuat ringkasan penjualan: ${error}`,
+      error: `Gagal memuat ringkasan penjualan ${period}: ${error.message}`,
     };
   }
 
   const totalAmount = sales.reduce((sum, sale) => sum + sale.total_amount, 0);
+  const totalPcs = sales.reduce((sum, sale) => {
+    const itemQuantities = Array.isArray(sale.items)
+      ? sale.items.reduce((itemSum, item) => itemSum + (item.quantity || 0), 0)
+      : 0;
+    return sum + itemQuantities;
+  }, 0);
 
-  return { totalAmount, count: sales.length, error: null };
+  return { totalAmount, totalPcs, count: sales.length, error: null };
 }
 
+export async function getPurchaseSummary(
+  period: "daily" | "weekly" | "monthly" | "all" = "monthly"
+) {
+  const supabase = await createServerSupabaseClient();
+
+  const { startDate, endDate } = getDateRange(period);
+
+  let query = supabase
+    .from("transactions")
+    .select(
+      `
+      total_amount
+    `
+    )
+    .eq("type", "purchase");
+
+  if (startDate) {
+    query = query
+      .gte("transaction_timestamp", startDate)
+      .lte("transaction_timestamp", endDate);
+  }
+
+  const { data: purchases, error } = await query;
+
+  if (error) {
+    console.error(`Error getting purchase summary for ${period}:`, error);
+    return {
+      totalAmount: 0,
+      count: 0,
+      error: `Gagal memuat ringkasan pembelian ${period}: ${error.message}`,
+    };
+  }
+
+  const totalAmount = purchases.reduce(
+    (sum, purchase) => sum + purchase.total_amount,
+    0
+  );
+
+  return { totalAmount, count: purchases.length, error: null };
+}
+
+// --- GET MENU AND CAROUSEL COUNTS ---
 export async function getMenuAndCarouselCounts() {
   const supabase = await createServerSupabaseClient();
   let menuCount = 0;
   let carouselCount = 0;
+  const promoCount = 0; // Tambahkan ini (jika nanti ada tabel promo)
   let error: string | null = null;
 
   try {
@@ -57,14 +154,23 @@ export async function getMenuAndCarouselCounts() {
 
     if (carouselError) throw carouselError;
     carouselCount = fetchedCarouselCount || 0;
+
+    // Untuk promo (jika sudah ada tabel 'promos')
+    // const { count: fetchedPromoCount, error: promoError } = await supabase
+    //   .from('promos')
+    //   .select('*', { count: 'exact', head: true })
+    //   .eq('is_active', true);
+    // if (promoError) throw promoError;
+    // promoCount = fetchedPromoCount || 0;
   } catch (err: any) {
     console.error("Error fetching dashboard counts:", err.message);
     error = `Gagal memuat jumlah data: ${err.message}`;
   }
 
-  return { menuCount, carouselCount, error };
+  return { menuCount, carouselCount, promoCount, error };
 }
 
+// --- GET RECENT SALES TRANSACTIONS --- (tetap sama)
 export async function getRecentSalesTransactions(limit: number = 5) {
   const supabase = await createServerSupabaseClient();
 
@@ -80,6 +186,7 @@ export async function getRecentSalesTransactions(limit: number = 5) {
   return { data: recentSales, error: null };
 }
 
+// --- GET TOP SELLING MENUS (Complex Query) --- (tetap sama)
 export async function getTopSellingMenus(
   limit: number = 5,
   period: "monthly" | "all" = "monthly"
@@ -105,24 +212,12 @@ export async function getTopSellingMenus(
     .eq("transaction.type", "sale");
 
   if (period === "monthly") {
-    const now = new Date();
-    const startOfMonth = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      1
-    ).toISOString();
-    const endOfMonth = new Date(
-      now.getFullYear(),
-      now.getMonth() + 1,
-      0,
-      23,
-      59,
-      59,
-      999
-    ).toISOString();
-    query = query
-      .gte("transaction.transaction_timestamp", startOfMonth)
-      .lte("transaction.transaction_timestamp", endOfMonth);
+    const { startDate, endDate } = getDateRange(period); // Gunakan helper
+    if (startDate) {
+      query = query
+        .gte("transaction.transaction_timestamp", startDate)
+        .lte("transaction.transaction_timestamp", endDate);
+    }
   }
 
   const { data, error } = await query;
@@ -161,8 +256,83 @@ export async function getTopSellingMenus(
   });
 
   const sortedTopMenus = Object.values(aggregatedSales)
-    .sort((a, b) => b.totalQuantity - a.totalQuantity) // Urutkan berdasarkan kuantitas terjual
-    .slice(0, limit); // Ambil limit
+    .sort((a, b) => b.totalQuantity - a.totalQuantity)
+    .slice(0, limit);
 
   return { data: sortedTopMenus, error: null };
+}
+
+// --- GET TOP SPENDING ITEMS (Complex Query for Purchases) ---
+export async function getTopSpendingItems(
+  limit: number = 3,
+  period: "monthly" | "all" = "monthly"
+) {
+  const supabase = await createServerSupabaseClient();
+  let query = supabase
+    .from("transactions")
+    .select(
+      `
+            id,
+            total_amount,
+            purchase_items_json,
+            transaction_timestamp
+        `
+    )
+    .eq("type", "purchase");
+
+  if (period === "monthly") {
+    const { startDate, endDate } = getDateRange(period);
+    if (startDate) {
+      query = query
+        .gte("transaction_timestamp", startDate)
+        .lte("transaction_timestamp", endDate);
+    }
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error("Error getting top spending items:", error.message);
+    return {
+      data: [],
+      error: `Gagal memuat item pengeluaran teratas: ${error.message}`,
+    };
+  }
+
+  const aggregatedPurchases: {
+    [itemName: string]: {
+      name: string;
+      totalQuantity: number;
+      totalCost: number;
+    };
+  } = {};
+
+  (data as Transaction[]).forEach((transaction) => {
+    if (
+      transaction.purchase_items_json &&
+      Array.isArray(transaction.purchase_items_json)
+    ) {
+      transaction.purchase_items_json.forEach((item) => {
+        const itemName = item.raw_material_name;
+        const quantity = item.quantity;
+        const unitPrice = item.unit_price;
+
+        if (!aggregatedPurchases[itemName]) {
+          aggregatedPurchases[itemName] = {
+            name: itemName,
+            totalQuantity: 0,
+            totalCost: 0,
+          };
+        }
+        aggregatedPurchases[itemName].totalQuantity += quantity;
+        aggregatedPurchases[itemName].totalCost += quantity * unitPrice;
+      });
+    }
+  });
+
+  const sortedTopItems = Object.values(aggregatedPurchases)
+    .sort((a, b) => b.totalCost - a.totalCost) // Urutkan berdasarkan total biaya
+    .slice(0, limit);
+
+  return { data: sortedTopItems, error: null };
 }

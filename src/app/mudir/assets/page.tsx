@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import { Suspense } from "react";
 import { getAssets, uploadAssetToSupabase } from "@/lib/actions/assets";
 import { AssetGrid } from "@/components/admin/asset/AssetGrid";
-import { AssetUploadForm } from "@/components/admin/asset/AssetUploadForm"; // Akan dibuat (atau bisa pakai AssetManager langsung)
+import { AssetUploadForm } from "@/components/admin/asset/AssetUploadForm";
 
 export const metadata: Metadata = {
   title: "Manajemen Aset - Mudir Menurutmu",
@@ -12,27 +12,24 @@ export const metadata: Metadata = {
 };
 
 export default async function AssetsManagementPage() {
-  const { data: assets, error } = await getAssets(); // Fetch aset di Server Component
+  const { data: assets, error } = await getAssets();
 
   return (
     <div className="p-4 md:p-8">
       <h1 className="text-3xl font-display lowercase text-deep-mocha mb-6">
-        manajemen aset
+        Manajemen Aset
       </h1>
 
-      {/* Bagian Upload Aset Baru */}
       <div className="bg-light-cream p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-2xl font-display lowercase text-deep-mocha mb-4">
-          upload aset baru
+          Upload Aset Baru
         </h2>
-        {/* Menggunakan AssetUploadForm baru atau bisa langsung AssetManager */}
-        <AssetUploadForm /> {/* Akan dibuat sebagai Client Component */}
+        <AssetUploadForm />
       </div>
 
-      {/* Bagian Daftar Aset */}
       <div className="bg-light-cream p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-2xl font-display lowercase text-deep-mocha mb-4">
-          galeri aset
+          Galeri Aset
         </h2>
         {error ? (
           <div className="bg-red-100 border border-red-400 text-red-700 p-4 rounded-lg">
@@ -51,7 +48,6 @@ export default async function AssetsManagementPage() {
             }
           >
             <AssetGrid assets={assets} />{" "}
-            {/* AssetGrid adalah Client Component */}
           </Suspense>
         )}
       </div>

@@ -120,7 +120,7 @@ export default async function MenuDetailsPage({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
             <div className="space-y-4">
               <h2 className="text-3xl font-display lowercase mb-2">
-                detail produk
+                Detail Produk
               </h2>
               <p className="text-xl font-body font-semibold text-deep-mocha">
                 {menuItem.price.toLocaleString("id-ID", {
@@ -160,7 +160,7 @@ export default async function MenuDetailsPage({
 
             <div className="space-y-4">
               <h3 className="text-xl font-display lowercase mb-2">
-                visual lainnya
+                Foto Produk
               </h3>
               <div className="relative w-full aspect-video rounded-lg overflow-hidden border border-warm-brown bg-clay-pink flex items-center justify-center text-warm-brown">
                 <p>Gambar Tambahan</p>

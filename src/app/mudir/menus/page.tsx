@@ -36,7 +36,7 @@ export default async function MenusManagementPage() {
   return (
     <div className="p-4 md:p-8">
       <h1 className="text-3xl font-display lowercase text-deep-mocha mb-6">
-        manajemen menu
+        Manajemen Menu
       </h1>
 
       <div className="flex justify-end mb-6">

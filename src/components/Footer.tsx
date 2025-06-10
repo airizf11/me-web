@@ -76,7 +76,7 @@ export function Footer() {
               <FontAwesomeIcon icon={faWhatsapp} size="lg" />
             </a>
             <a
-              href="https://www.tiktok.com/@menurutmu_"
+              href="https://www.tiktok.com/@me_nurutmu"
               target="_blank"
               rel="noopener noreferrer"
               className="text-light-cream hover:text-clay-pink transition-colors"

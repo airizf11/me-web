@@ -10,7 +10,7 @@ import {
   PlusCircleIcon,
   MinusCircleIcon,
   XMarkIcon,
-} from "@heroicons/react/24/outline"; // Ikon
+} from "@heroicons/react/24/outline";
 
 interface RawMaterialSelectorItem {
   id: string;
@@ -28,7 +28,6 @@ interface SelectedPurchaseItemUI {
   unit: string;
   unit_price: number;
   subtotal: number;
-  // PENTING: Tambahan untuk item kustom
   custom_description?: string;
   custom_category?: string;
 }
@@ -53,9 +52,9 @@ export function PurchaseItemInput({
   );
   const [loadingSearch, setLoadingSearch] = useState(false);
   const [selectedItems, setSelectedItems] =
-    useState<SelectedPurchaseItemUI[]>(initialItems); // Initial items
-
+    useState<SelectedPurchaseItemUI[]>(initialItems);
   const searchInputRef = useRef<HTMLInputElement>(null);
+
   const onItemsChangeRef = useRef(onItemsChange);
   const onTotalAmountChangeRef = useRef(onTotalAmountChange);
 
@@ -72,8 +71,8 @@ export function PurchaseItemInput({
       quantity: item.quantity,
       unit: item.unit,
       unit_price: item.unit_price,
-      custom_description: item.custom_description || undefined, // undefined jika kosong
-      custom_category: item.custom_category || undefined, // undefined jika kosong
+      custom_description: item.custom_description || undefined,
+      custom_category: item.custom_category || undefined,
     }));
 
     const currentItemsString = JSON.stringify(currentItemsData);
@@ -151,14 +150,31 @@ export function PurchaseItemInput({
     searchInputRef.current?.focus();
   };
 
-  // --- NEW: Add Custom Item ---
+  // --- NEW: Add Custom Item & Unit Price Calculator ---
   const [customItemName, setCustomItemName] = useState("");
   const [customItemQuantity, setCustomItemQuantity] = useState(1);
   const [customItemUnit, setCustomItemUnit] = useState("");
   const [customItemUnitPrice, setCustomItemUnitPrice] = useState(0);
-  // PENTING: State untuk deskripsi dan kategori kustom
   const [customItemDescription, setCustomItemDescription] = useState("");
   const [customItemCategory, setCustomItemCategory] = useState("");
+
+  // NEW: State untuk kalkulator harga per unit
+  const [totalPackagePrice, setTotalPackagePrice] = useState<number | "">("");
+  const [quantityInPackage, setQuantityInPackage] = useState<number | "">("");
+
+  // Hitung unit price otomatis dari totalPackagePrice dan quantityInPackage
+  useEffect(() => {
+    if (
+      typeof totalPackagePrice === "number" &&
+      totalPackagePrice >= 0 &&
+      typeof quantityInPackage === "number" &&
+      quantityInPackage > 0
+    ) {
+      setCustomItemUnitPrice(totalPackagePrice / quantityInPackage);
+    } else if (totalPackagePrice === "" && quantityInPackage === "") {
+      setCustomItemUnitPrice(0); // Reset if both are empty
+    }
+  }, [totalPackagePrice, quantityInPackage]);
 
   const handleAddCustomItem = () => {
     if (
@@ -183,8 +199,8 @@ export function PurchaseItemInput({
       unit: customItemUnit,
       unit_price: customItemUnitPrice,
       subtotal: customItemQuantity * customItemUnitPrice,
-      custom_description: customItemDescription || undefined, // undefined jika kosong
-      custom_category: customItemCategory || undefined, // undefined jika kosong
+      custom_description: customItemDescription || undefined,
+      custom_category: customItemCategory || undefined,
     };
     setSelectedItems((prevItems) => [...prevItems, newItem]);
 
@@ -193,8 +209,10 @@ export function PurchaseItemInput({
     setCustomItemQuantity(1);
     setCustomItemUnit("");
     setCustomItemUnitPrice(0);
-    setCustomItemDescription(""); // Reset
-    setCustomItemCategory(""); // Reset
+    setCustomItemDescription("");
+    setCustomItemCategory("");
+    setTotalPackagePrice(""); // Reset kalkulator
+    setQuantityInPackage(""); // Reset kalkulator
   };
 
   const handleQuantityChange = (itemId: string, delta: number) => {
@@ -344,20 +362,73 @@ export function PurchaseItemInput({
             />
           </div>
         </div>
+        {/* NEW: Kalkulator Harga Per Unit */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label
+              htmlFor="total_package_price"
+              className="block text-sm font-body text-deep-mocha mb-1"
+            >
+              Total Harga Beli Paket
+            </label>
+            <input
+              type="number"
+              step="any"
+              id="total_package_price"
+              value={totalPackagePrice}
+              onChange={(e) =>
+                setTotalPackagePrice(parseFloat(e.target.value) || "")
+              }
+              className="w-full p-2 border border-warm-brown rounded-md bg-light-cream text-deep-mocha"
+              placeholder="Contoh: 15080"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="quantity_in_package"
+              className="block text-sm font-body text-deep-mocha mb-1"
+            >
+              Kuantitas dalam Paket
+            </label>
+            <input
+              type="number"
+              step="any"
+              id="quantity_in_package"
+              value={quantityInPackage}
+              onChange={(e) =>
+                setQuantityInPackage(parseFloat(e.target.value) || "")
+              }
+              className="w-full p-2 border border-warm-brown rounded-md bg-light-cream text-deep-mocha"
+              placeholder="Contoh: 25"
+            />
+          </div>
+        </div>
+        {/* End Kalkulator Harga Per Unit */}
+
         <div>
           <label
             htmlFor="custom_item_unit_price"
             className="block text-sm font-body text-deep-mocha mb-1"
           >
-            Harga Satuan
+            Harga Satuan (Otomatis dari Kalkulator)
           </label>
           <input
             type="number"
             step="any"
             id="custom_item_unit_price"
             value={customItemUnitPrice}
-            onChange={(e) => setCustomItemUnitPrice(parseFloat(e.target.value))}
+            onChange={(e) => {
+              // Allow manual override if needed
+              setCustomItemUnitPrice(parseFloat(e.target.value));
+              setTotalPackagePrice(""); // Clear calculator inputs if manual override
+              setQuantityInPackage("");
+            }}
             className="w-full p-2 border border-warm-brown rounded-md bg-light-cream text-deep-mocha"
+            disabled={
+              totalPackagePrice !== "" &&
+              quantityInPackage !== "" &&
+              customItemUnitPrice !== 0
+            } // Disable if calculator is active
           />
         </div>
         {/* PENTING: Input Deskripsi Tambahan & Kategori Kustom */}

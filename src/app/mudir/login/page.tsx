@@ -59,7 +59,7 @@ export default function LoginPage() {
     <section className="min-h-screen flex items-center justify-center p-4 bg-light-cream">
       <div className="bg-warm-brown text-light-cream p-8 rounded-lg shadow-lg w-full max-w-md">
         <h1 className="text-3xl font-display lowercase text-center mb-6">
-          login mudir
+          Admin Login
         </h1>
         <form onSubmit={handleLogin} className="space-y-4">
           <div>

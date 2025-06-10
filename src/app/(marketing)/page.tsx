@@ -22,12 +22,11 @@ export default async function HomePage() {
   let newComingMenus: MenuItem[] = [];
 
   try {
-    // Fetch SEMUA slide aktif untuk Hero Section (sebelumnya hanya 1)
     const { data: slidesData, error: slideError } = await supabase
       .from("carousel_slides")
       .select("*")
       .eq("is_active", true)
-      .order("order_index", { ascending: true }); // Tetap urutkan, tapi kita akan pilih random
+      .order("order_index", { ascending: true });
 
     if (slideError && slideError.code !== "PGRST116") {
       console.error(
@@ -35,14 +34,12 @@ export default async function HomePage() {
         slideError.message
       );
     } else {
-      // PENTING: Pilih satu slide secara ACAK dari data yang sudah di-fetch
       if (slidesData && slidesData.length > 0) {
         const randomIndex = Math.floor(Math.random() * slidesData.length);
         heroSlide = slidesData[randomIndex] as CarouselSlide;
       }
     }
 
-    // Fetch Top Menus
     const { data: topMenusData, error: topMenusError } = await supabase
       .from("menus")
       .select("*")
@@ -56,7 +53,6 @@ export default async function HomePage() {
       topMenus = topMenusData as MenuItem[];
     }
 
-    // Fetch New Coming Menus
     const { data: newComingMenusData, error: newComingMenusError } =
       await supabase
         .from("menus")
@@ -87,7 +83,6 @@ export default async function HomePage() {
     button_link: "/menu",
   };
 
-  // Gunakan data dari heroSlide jika ada dan URL-nya valid, jika tidak pakai default.
   const finalHeroData = {
     imageUrl: heroSlide?.image_url || defaultHero.imageUrl,
     altText: heroSlide?.alt_text || defaultHero.altText,
@@ -138,7 +133,7 @@ export default async function HomePage() {
             href="/menu"
             className="inline-flex items-center px-8 py-4 bg-deep-mocha text-light-cream rounded-full font-body text-xl hover:bg-warm-brown transition-colors shadow-lg"
           >
-            Lihat Semua Menu Kami
+            Lihat Semua Menu
           </Link>
         </div>
       </section>
@@ -153,7 +148,7 @@ export default async function HomePage() {
       <section className="bg-warm-brown py-16 px-8 relative z-10">
         <div className="container mx-auto text-center">
           <h2 className="text-4xl font-display lowercase text-light-cream mb-12">
-            menu terfavorit
+            Menu Terfavorit
           </h2>
           {topMenus.length === 0 ? (
             <p className="text-light-cream/70 font-body">
@@ -215,7 +210,7 @@ export default async function HomePage() {
       <section className="bg-light-cream py-16 px-8 relative z-10">
         <div className="container mx-auto">
           <h2 className="text-4xl font-display lowercase text-deep-mocha mb-12 text-center">
-            lebih banyak makna
+            Lebih Banyak Makna
           </h2>
           <Carousel />
         </div>
@@ -231,7 +226,7 @@ export default async function HomePage() {
       <section className="bg-warm-brown py-16 px-8 relative z-10">
         <div className="container mx-auto text-center">
           <h2 className="text-4xl font-display lowercase text-light-cream mb-12">
-            menu terbaru
+            Menu Terbaru
           </h2>
           {newComingMenus.length === 0 ? (
             <p className="text-light-cream/70 font-body">

@@ -7,12 +7,12 @@ import { type CarouselSlide } from "@/lib/types";
 import {
   createCarouselSlide,
   updateCarouselSlide,
-} from "@/lib/actions/carousel"; // Import Server Actions
+} from "@/lib/actions/carousel";
 import { useRouter } from "next/navigation";
-import { AssetManager } from "@/components/admin/AssetManager"; // Import AssetManager
+import { AssetManager } from "@/components/admin/AssetManager";
 
 type CarouselFormProps = {
-  initialData?: CarouselSlide | null; // Untuk mode edit
+  initialData?: CarouselSlide | null;
 };
 
 export function CarouselForm({ initialData }: CarouselFormProps) {
@@ -52,10 +52,7 @@ export function CarouselForm({ initialData }: CarouselFormProps) {
     setErrors(null);
     toast.dismiss();
 
-    // Data dari AssetManager untuk gambar
-    formData.set("image_url", finalImageUrl || ""); // URL final dari AssetManager
-    // File sebenarnya tidak perlu di-set di sini, karena AssetManager yang mengurus upload ke storage.
-    // Kita hanya perlu URL-nya.
+    formData.set("image_url", finalImageUrl || "");
 
     let result;
     if (initialData?.id) {
@@ -67,7 +64,7 @@ export function CarouselForm({ initialData }: CarouselFormProps) {
     if (result.success) {
       toast.success(result.message);
       formRef.current?.reset();
-      router.push("/mudir/carousel"); // Redirect kembali ke halaman daftar slide
+      router.push("/mudir/carousel");
     } else {
       toast.error(result.message || "Operasi gagal.");
       if (result.errors) {
@@ -187,7 +184,6 @@ export function CarouselForm({ initialData }: CarouselFormProps) {
         )}
       </div>
 
-      {/* --- Integrasi AssetManager --- */}
       <div className="my-6">
         <label className="block text-sm font-body text-deep-mocha mb-2">
           Gambar Slide
@@ -195,12 +191,11 @@ export function CarouselForm({ initialData }: CarouselFormProps) {
         <AssetManager
           onAssetSelect={setFinalImageUrl}
           initialAssetUrl={initialData?.image_url}
-          allowedFileTypes="image/*" // Hanya izinkan gambar untuk slide
+          allowedFileTypes="image/*"
           bucketName="assets"
           fileInputLabel="Pilih gambar untuk slide"
         />
       </div>
-      {/* --- Akhir Integrasi AssetManager --- */}
 
       <div>
         <label
