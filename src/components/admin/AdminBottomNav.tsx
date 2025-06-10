@@ -4,20 +4,17 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  FolderIcon,
   HomeIcon,
   ListBulletIcon,
-  PhotoIcon,
   ShoppingCartIcon,
+  EllipsisVerticalIcon,
 } from "@heroicons/react/24/outline";
 
 const bottomNavItems = [
   { name: "Dashboard", href: "/mudir", icon: HomeIcon },
   { name: "Menu", href: "/mudir/menus", icon: ListBulletIcon },
-  { name: "Carousel", href: "/mudir/carousel", icon: PhotoIcon },
   { name: "Penjualan", href: "/mudir/transactions", icon: ShoppingCartIcon },
-  { name: "Aset", href: "/mudir/assets", icon: FolderIcon },
-  // Tambah link lain (misal 'Settings')
+  { name: "Lainnya", href: "/mudir/more", icon: EllipsisVerticalIcon },
 ];
 
 export function AdminBottomNav() {
@@ -27,7 +24,13 @@ export function AdminBottomNav() {
     <nav className="fixed bottom-0 left-0 w-full md:hidden bg-deep-mocha text-light-cream shadow-lg z-20 border-t border-warm-brown">
       <div className="flex justify-around items-center h-16">
         {bottomNavItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive =
+            pathname === item.href ||
+            (item.href === "/mudir/more" &&
+              pathname.startsWith("/mudir/") &&
+              !["/mudir", "/mudir/menus", "/mudir/transactions"].includes(
+                pathname
+              ));
           return (
             <Link
               key={item.name}
