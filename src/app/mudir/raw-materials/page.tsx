@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Metadata } from "next";
 import Link from "next/link";
-import { createServerSupabaseClientReadOnly } from "@/lib/supabase/server";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { type RawMaterial } from "@/lib/types";
 import { RawMaterialTable } from "@/components/admin/raw-material/RawMaterialTable";
 import { ShoppingBagIcon } from "@heroicons/react/24/outline";
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default async function RawMaterialsManagementPage() {
-  const supabase = await createServerSupabaseClientReadOnly();
+  const supabase = await createServerSupabaseClient();
 
   let rawMaterials: RawMaterial[] = [];
   let error: string | null = null;

@@ -4,7 +4,7 @@
 import { Metadata } from "next";
 import { HeroSection } from "@/components/marketing/HeroSection";
 import { Carousel } from "@/components/Carousel";
-import { createServerSupabaseClientReadOnly } from "@/lib/supabase/server";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { type CarouselSlide, type MenuItem } from "@/lib/types";
 import Link from "next/link";
 import Image from "next/image";
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const supabase = await createServerSupabaseClientReadOnly();
+  const supabase = await createServerSupabaseClient();
   let heroSlide: CarouselSlide | null = null;
   let topMenus: MenuItem[] = [];
   let newComingMenus: MenuItem[] = [];

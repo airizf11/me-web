@@ -3,20 +3,16 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export async function middleware(req: NextRequest) {
-  const res = NextResponse.next();
   const supabase = await createServerSupabaseClient();
-
   const {
     data: { session },
-    error: sessionError,
   } = await supabase.auth.getSession();
 
-  if (sessionError) {
-    console.error(
-      "Error getting Supabase session in middleware:",
-      sessionError.message
-    );
-  }
+  const res = NextResponse.next({
+    request: {
+      headers: req.headers,
+    },
+  });
 
   if (req.nextUrl.pathname.startsWith("/mudir")) {
     if (req.nextUrl.pathname === "/mudir/login") {

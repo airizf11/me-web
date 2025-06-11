@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // src/app/(marketing)/menu/page.tsx
 import { Metadata } from "next";
-import { createServerSupabaseClientReadOnly } from "@/lib/supabase/server";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { type MenuItem } from "@/lib/types";
 import { MenuCategorySection } from "@/components/marketing/MenuCategorySection";
 
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function MenuPage() {
-  const supabase = await createServerSupabaseClientReadOnly();
+  const supabase = await createServerSupabaseClient();
 
   let menuItems: MenuItem[] = [];
   let error: string | null = null;

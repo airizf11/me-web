@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // src/app/mudir/raw-materials/[id]/edit/page.tsx
 import { Metadata } from "next";
-import { createServerSupabaseClientReadOnly } from "@/lib/supabase/server";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { RawMaterialForm } from "@/components/admin/raw-material/RawMaterialForm";
 import { type RawMaterial } from "@/lib/types";
 import { getRawMaterialById } from "@/lib/actions/raw_materials";

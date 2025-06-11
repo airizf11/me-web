@@ -2,10 +2,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import {
-  createServerSupabaseClient,
-  createServerSupabaseClientReadOnly,
-} from "@/lib/supabase/server";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { z } from "zod";
 import { type MenuItem } from "@/lib/types";
 
@@ -279,7 +276,7 @@ export async function toggleMenuItemAvailability(
 }
 
 export async function getMenuItemBySlug(slug: string) {
-  const supabase = await createServerSupabaseClientReadOnly();
+  const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from("menus")
     .select("*")
@@ -295,7 +292,7 @@ export async function getMenuItemBySlug(slug: string) {
 }
 
 export async function getAllCategories() {
-  const supabase = await createServerSupabaseClientReadOnly();
+  const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from("menus")
     .select("category, count")
@@ -311,7 +308,7 @@ export async function getAllCategories() {
 }
 
 export async function getMenusByCategory(category: string | "all") {
-  const supabase = await createServerSupabaseClientReadOnly();
+  const supabase = await createServerSupabaseClient();
   let query = supabase
     .from("menus")
     .select("*")

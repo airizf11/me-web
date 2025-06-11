@@ -3,7 +3,7 @@
 // src/app/mudir/purchases/page.tsx
 import { Metadata } from "next";
 import Link from "next/link";
-import { createServerSupabaseClientReadOnly } from "@/lib/supabase/server";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { type Transaction } from "@/lib/types";
 import { PurchaseTable } from "@/components/admin/purchase/PurchaseTable";
 import { Suspense } from "react";
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 export default async function PurchasesManagementPage({
   searchParams,
 }: PurchasesManagementPageProps) {
-  const supabase = await createServerSupabaseClientReadOnly();
+  const supabase = await createServerSupabaseClient();
   let purchases: Transaction[] = [];
   let error: string | null = null;
 

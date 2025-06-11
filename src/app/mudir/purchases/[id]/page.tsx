@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // src/app/mudir/purchases/[id]/page.tsx
 import { Metadata } from "next";
-import { createServerSupabaseClientReadOnly } from "@/lib/supabase/server";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { type Transaction, type PurchaseItem } from "@/lib/types";
 import { getTransactionDetails } from "@/lib/actions/transactions/read";
 import { notFound } from "next/navigation";
