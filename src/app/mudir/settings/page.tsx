@@ -22,7 +22,6 @@ export default function SettingsPage() {
       </h1>
 
       <div className="max-w-3xl mx-auto space-y-8">
-        {/* Pengaturan Umum */}
         <div className="bg-light-cream p-6 rounded-lg shadow-md border border-warm-brown">
           <h2 className="text-2xl font-display lowercase text-deep-mocha mb-4 flex items-center">
             <WrenchScrewdriverIcon className="h-6 w-6 mr-2" /> Umum
@@ -38,7 +37,6 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Integrasi Pihak Ketiga */}
         <div className="bg-warm-brown text-light-cream p-6 rounded-lg shadow-md">
           <h2 className="text-2xl font-display lowercase mb-4 flex items-center">
             <ChartBarIcon className="h-6 w-6 mr-2 text-clay-pink" /> Integrasi
@@ -59,7 +57,6 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Pengaturan Lanjutan */}
         <div className="bg-light-cream p-6 rounded-lg shadow-md border border-warm-brown">
           <h2 className="text-2xl font-display lowercase text-deep-mocha mb-4 flex items-center">
             <Cog6ToothIcon className="h-6 w-6 mr-2" /> Lanjutan

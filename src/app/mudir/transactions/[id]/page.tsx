@@ -3,14 +3,14 @@
 import { Metadata } from "next";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { type Transaction, type TransactionItem } from "@/lib/types";
-import { getTransactionDetails } from "@/lib/actions/transactions/read"; // Server Action
+import { getTransactionDetails } from "@/lib/actions/transactions/read";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { Link } from "lucide-react";
 
 interface TransactionDetailsPageProps {
   params?: Promise<{
-    id: string; // ID transaksi dari URL
+    id: string;
   }>;
 }
 
@@ -52,7 +52,7 @@ export default async function TransactionDetailsPage({
 
   if (error || !transaction) {
     console.error("Error fetching transaction details:", error);
-    notFound(); // Tampilkan 404 jika tidak ditemukan atau ada error fetch
+    notFound();
     return null;
   }
 
@@ -71,12 +71,12 @@ export default async function TransactionDetailsPage({
   return (
     <div className="p-4 md:p-8">
       <h1 className="text-3xl font-display lowercase text-deep-mocha mb-6">
-        detail transaksi
+        Detail Transaksi
       </h1>
 
       <div className="bg-light-cream p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-xl font-display lowercase text-deep-mocha mb-4">
-          ringkasan
+          Ringkasan
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-deep-mocha font-body">
           <div>
@@ -134,7 +134,7 @@ export default async function TransactionDetailsPage({
 
       <div className="bg-light-cream p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-xl font-display lowercase text-deep-mocha mb-4">
-          item transaksi
+          Item Transaksi
         </h2>
         {transaction.items && transaction.items.length > 0 ? (
           <div className="overflow-x-auto">
@@ -205,7 +205,7 @@ export default async function TransactionDetailsPage({
       {transaction.screenshot_url && (
         <div className="bg-light-cream p-6 rounded-lg shadow-md mb-8">
           <h2 className="text-xl font-display lowercase text-deep-mocha mb-4">
-            screenshot transaksi
+            Screenshot Transaksi
           </h2>
           <div className="relative w-full max-w-md mx-auto aspect-[4/3] rounded-lg overflow-hidden border border-deep-mocha shadow-md">
             <Image
@@ -213,7 +213,7 @@ export default async function TransactionDetailsPage({
               alt={`Screenshot transaksi ${transaction.id}`}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
-              style={{ objectFit: "contain" }} // Gunakan 'contain' agar gambar tidak terpotong
+              style={{ objectFit: "contain" }}
             />
           </div>
         </div>

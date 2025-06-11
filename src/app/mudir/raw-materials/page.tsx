@@ -5,8 +5,8 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { createServerSupabaseClientReadOnly } from "@/lib/supabase/server";
 import { type RawMaterial } from "@/lib/types";
-import { RawMaterialTable } from "@/components/admin/raw-material/RawMaterialTable"; // Import komponen
-import { ShoppingBagIcon } from "@heroicons/react/24/outline"; // Contoh ikon
+import { RawMaterialTable } from "@/components/admin/raw-material/RawMaterialTable";
+import { ShoppingBagIcon } from "@heroicons/react/24/outline";
 
 export const metadata: Metadata = {
   title: "Manajemen Bahan Baku - Mudir Menurutmu",
@@ -23,7 +23,7 @@ export default async function RawMaterialsManagementPage() {
     const { data, error: dbError } = await supabase
       .from("raw_materials")
       .select("*")
-      .order("name", { ascending: true }); // Urutkan berdasarkan nama
+      .order("name", { ascending: true });
 
     if (dbError) {
       throw dbError;
@@ -37,22 +37,20 @@ export default async function RawMaterialsManagementPage() {
   return (
     <div className="p-4 md:p-8">
       <h1 className="text-3xl font-display lowercase text-deep-mocha mb-6">
-        manajemen bahan baku
+        Manajemen Bahan Baku
       </h1>
 
-      {/* Ringkasan Stok (opsional, bisa ditambah nanti) */}
       <div className="bg-warm-brown text-light-cream p-6 rounded-lg shadow-md mb-8">
-        <h2 className="text-2xl font-display lowercase mb-4">ringkasan stok</h2>
+        <h2 className="text-2xl font-display lowercase mb-4">Ringkasan Stok</h2>
         <div className="flex justify-between items-center">
-          <span className="text-lg font-body">Total Bahan Baku Unik:</span>
+          <span className="text-lg font-body">Total Bahan Baku:</span>
           <span className="text-3xl font-bold font-body">
             {rawMaterials.length}
           </span>
         </div>
-        {/* Bisa tambahkan total nilai stok atau alert stok rendah */}
+        {/* Bisa tambah total nilai stok or alert stok rendah */}
       </div>
 
-      {/* Tombol Tambah Bahan Baku Baru */}
       <div className="flex justify-end mb-6">
         <Link
           href="/mudir/raw-materials/create"
@@ -62,10 +60,9 @@ export default async function RawMaterialsManagementPage() {
         </Link>
       </div>
 
-      {/* Bagian Daftar Bahan Baku */}
       <div className="bg-light-cream p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-2xl font-display lowercase text-deep-mocha mb-4">
-          daftar bahan baku
+          Daftar Bahan Baku
         </h2>
 
         {error ? (

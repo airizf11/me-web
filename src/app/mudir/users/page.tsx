@@ -18,22 +18,22 @@ export default function UsersManagementPage() {
   const dummyUsers = [
     {
       id: 1,
-      name: "John Doe (Owner)",
-      email: "john.doe@menurutmu.com",
+      name: "Rizki Fe (Owner)",
+      email: "rizkif99a@gmail.com",
       role: "owner",
       status: "Aktif",
     },
     {
       id: 2,
-      name: "Jane Smith (Admin)",
-      email: "jane.smith@menurutmu.com",
+      name: "Admin 1 (Admin)",
+      email: "admin1@menurutmu.mail",
       role: "admin",
       status: "Aktif",
     },
     {
       id: 3,
-      name: "Peter Jones (Kasir)",
-      email: "peter.jones@menurutmu.com",
+      name: "Kasir 1 (Kasir)",
+      email: "kasir1@menurutmu.mail",
       role: "cashier",
       status: "Tidak Aktif",
     },
@@ -42,13 +42,12 @@ export default function UsersManagementPage() {
   return (
     <div className="p-4 md:p-8">
       <h1 className="text-3xl font-display lowercase text-deep-mocha mb-6">
-        manajemen pengguna
+        Manajemen Pengguna
       </h1>
 
-      {/* Ringkasan Pengguna */}
       <div className="bg-warm-brown text-light-cream p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-2xl font-display lowercase mb-4">
-          ringkasan pengguna
+          Ringkasan Pengguna
         </h2>
         <div className="flex justify-between items-center mb-2">
           <span className="text-lg font-body">Total Pengguna Terdaftar:</span>
@@ -64,17 +63,15 @@ export default function UsersManagementPage() {
         </div>
       </div>
 
-      {/* Tombol Tambah Pengguna Baru */}
       <div className="flex justify-end mb-6">
         <Link
-          href="/mudir/users/create" // Placeholder link
+          href="/mudir/users/create" // Placeholder
           className="px-6 py-2 bg-deep-mocha text-light-cream rounded-md font-body hover:bg-warm-brown transition-colors flex items-center"
         >
           <PlusCircleIcon className="h-5 w-5 mr-2" /> Tambah Pengguna Baru
         </Link>
       </div>
 
-      {/* Bagian Daftar Pengguna */}
       <div className="bg-light-cream p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-2xl font-display lowercase text-deep-mocha mb-4">
           Daftar Pengguna

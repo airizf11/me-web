@@ -10,7 +10,11 @@ import {
   PopoverPanel,
   Transition,
 } from "@headlessui/react";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  Bars3Icon,
+  ShoppingCartIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import { usePathname } from "next/navigation";
 
@@ -21,7 +25,13 @@ const navigation = [
   { name: "Tentang Kami", href: "/about" },
 ];
 
-export function Navbar() {
+export function Navbar({
+  onCartClick,
+  cartItemCount,
+}: {
+  onCartClick: () => void;
+  cartItemCount: number;
+}) {
   const [scrollY, setScrollY] = useState(0);
   const [heroHeight, setHeroHeight] = useState(0);
   const pathname = usePathname();
@@ -113,6 +123,23 @@ export function Navbar() {
           </PopoverGroup>
 
           <div className="hidden items-center justify-end md:flex md:flex-1 lg:w-0">
+            <button
+              onClick={onCartClick}
+              className="hidden md:flex items-center ml-4 p-2 rounded-full relative"
+            >
+              <ShoppingCartIcon
+                className={clsx(
+                  "h-6 w-6 transition-colors",
+                  textColor,
+                  hoverTextColor
+                )}
+              />
+              {cartItemCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                  {cartItemCount}
+                </span>
+              )}
+            </button>
             <Link
               href="/checkout"
               className={clsx(
@@ -176,6 +203,19 @@ export function Navbar() {
               </div>
               <div className="space-y-6 px-5 py-6">
                 <div>
+                  <button
+                    onClick={onCartClick}
+                    className="md:hidden p-2 rounded-full relative"
+                  >
+                    <ShoppingCartIcon
+                      className={clsx("h-6 w-6 transition-colors", textColor)}
+                    />
+                    {cartItemCount > 0 && (
+                      <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                        {cartItemCount}
+                      </span>
+                    )}
+                  </button>
                   <Link
                     href="/checkout"
                     onClick={() => close()}

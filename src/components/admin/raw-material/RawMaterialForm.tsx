@@ -8,11 +8,11 @@ import { type RawMaterial } from "@/lib/types";
 import {
   createRawMaterial,
   updateRawMaterial,
-} from "@/lib/actions/raw_materials"; // Import Server Actions
+} from "@/lib/actions/raw_materials";
 import { useRouter } from "next/navigation";
 
 type RawMaterialFormProps = {
-  initialData?: RawMaterial | null; // Untuk mode edit
+  initialData?: RawMaterial | null;
 };
 
 export function RawMaterialForm({ initialData }: RawMaterialFormProps) {
@@ -23,7 +23,6 @@ export function RawMaterialForm({ initialData }: RawMaterialFormProps) {
   );
   const router = useRouter();
 
-  // State lokal untuk form input
   const [name, setName] = useState(initialData?.name || "");
   const [unit, setUnit] = useState(initialData?.unit || "");
   const [currentStock, setCurrentStock] = useState(
@@ -58,7 +57,7 @@ export function RawMaterialForm({ initialData }: RawMaterialFormProps) {
     if (result.success) {
       toast.success(result.message);
       formRef.current?.reset();
-      router.push("/mudir/raw-materials"); // Redirect kembali ke halaman daftar bahan baku
+      router.push("/mudir/raw-materials");
     } else {
       toast.error(result.message || "Operasi gagal.");
       if (result.errors) {

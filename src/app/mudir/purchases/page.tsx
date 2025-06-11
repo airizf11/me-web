@@ -5,13 +5,13 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { createServerSupabaseClientReadOnly } from "@/lib/supabase/server";
 import { type Transaction } from "@/lib/types";
-import { PurchaseTable } from "@/components/admin/purchase/PurchaseTable"; // Import PurchaseTable
+import { PurchaseTable } from "@/components/admin/purchase/PurchaseTable";
 import { Suspense } from "react";
-import { TransactionFilter } from "@/components/admin/transaction/TransactionFilter"; // Re-use TransactionFilter
+import { TransactionFilter } from "@/components/admin/transaction/TransactionFilter";
 
 interface SegmentSearchParams {
   period?: "daily" | "weekly" | "monthly" | "all";
-  platform?: string; // Di sini akan jadi supplier/sumber pembelian
+  platform?: string;
   search?: string;
   startDate?: string;
   endDate?: string;
@@ -43,7 +43,7 @@ export default async function PurchasesManagementPage({
       search: resolvedSearchParams.search,
       startDate: resolvedSearchParams.startDate,
       endDate: resolvedSearchParams.endDate,
-      type: "purchase" as const, // PENTING: Filter hanya untuk pembelian
+      type: "purchase" as const,
     };
 
     const { data, error: fetchError } = await (
@@ -59,32 +59,29 @@ export default async function PurchasesManagementPage({
     error = "Gagal memuat daftar pembelian. Silakan coba lagi nanti.";
   }
 
-  // Hitung total pengeluaran untuk periode yang difilter
   const totalPurchaseAmount = purchases.reduce(
     (sum, t) => sum + t.total_amount,
     0
   );
 
-  // Daftar sumber pembelian (untuk filter dropdown)
   const purchaseSources = [
     "All",
-    "Supplier Kopi A",
-    "Supplier Susu B",
-    "Pasar C",
-    "Online Shop D",
+    "Shopee",
+    "Alfamart",
+    "Perorangan",
+    "Toko",
     "Lain-lain",
   ];
 
   return (
     <div className="p-4 md:p-8">
       <h1 className="text-3xl font-display lowercase text-deep-mocha mb-6">
-        manajemen pembelian
+        Manajemen Pembelian
       </h1>
 
-      {/* Ringkasan Pembelian */}
       <div className="bg-warm-brown text-light-cream p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-2xl font-display lowercase mb-4">
-          ringkasan pengeluaran
+          Ringkasan Pengeluaran
         </h2>
         <div className="flex justify-between items-center">
           <span className="text-lg font-body">Total Pengeluaran:</span>
@@ -97,7 +94,6 @@ export default async function PurchasesManagementPage({
         </div>
       </div>
 
-      {/* Tombol Catat Pembelian Baru */}
       <div className="flex justify-end mb-6">
         <Link
           href="/mudir/purchases/create"
@@ -107,19 +103,16 @@ export default async function PurchasesManagementPage({
         </Link>
       </div>
 
-      {/* Bagian Daftar Pembelian */}
       <div className="bg-light-cream p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-2xl font-display lowercase text-deep-mocha mb-4">
-          daftar pembelian
+          Daftar Pembelian
         </h2>
 
-        {/* Filter Section (Client Component) */}
         <Suspense
           fallback={
             <div className="text-center text-warm-brown">Memuat filter...</div>
           }
         >
-          {/* Re-use TransactionFilter, tapi sesuaikan props untuk pembelian */}
           <TransactionFilter
             platformSources={purchaseSources}
             currentFilters={resolvedSearchParams}

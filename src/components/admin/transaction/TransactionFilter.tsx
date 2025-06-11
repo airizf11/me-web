@@ -16,7 +16,7 @@ interface FilterProps {
 
 type TransactionFilterProps = {
   platformSources: string[];
-  currentFilters?: FilterProps; // Tipe yang sudah diperbaiki
+  currentFilters?: FilterProps;
 };
 
 export function TransactionFilter({
@@ -34,11 +34,9 @@ export function TransactionFilter({
 
   const [debouncedSearch] = useDebounce(search, 500);
 
-  // Update URL search params whenever filters change
   const updateSearchParams = useCallback(() => {
-    const params = new URLSearchParams(); // Mulai dengan params kosong
+    const params = new URLSearchParams();
 
-    // Pertahankan params yang sudah ada kecuali yang akan kita ubah
     searchParams.forEach((value, key) => {
       if (
         !["period", "platform", "search", "startDate", "endDate"].includes(key)
@@ -62,7 +60,6 @@ export function TransactionFilter({
     if (endDate) params.set("endDate", endDate);
     else params.delete("endDate");
 
-    // Hindari redirect jika URL tidak berubah
     const newUrl = `?${params.toString()}`;
     if (
       decodeURIComponent(searchParams.toString()) !==
@@ -84,7 +81,6 @@ export function TransactionFilter({
     updateSearchParams();
   }, [updateSearchParams]);
 
-  // Sync state with currentFilters if they change (e.g. initial load)
   useEffect(() => {
     setPeriod(currentFilters?.period || "all");
     setPlatform(currentFilters?.platform || "All");
@@ -96,7 +92,6 @@ export function TransactionFilter({
   return (
     <div className="bg-light-cream p-4 rounded-md border border-clay-pink mb-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Filter Periode */}
         <div>
           <label
             htmlFor="periodFilter"
@@ -122,7 +117,6 @@ export function TransactionFilter({
           </select>
         </div>
 
-        {/* Filter Platform */}
         <div>
           <label
             htmlFor="platformFilter"
@@ -144,13 +138,12 @@ export function TransactionFilter({
           </select>
         </div>
 
-        {/* Search Pelanggan/ID Order */}
         <div>
           <label
             htmlFor="searchFilter"
             className="block text-sm font-body text-deep-mocha mb-1"
           >
-            Cari Pelanggan / ID Order
+            Cari lainnya...
           </label>
           <input
             type="text"
@@ -163,7 +156,6 @@ export function TransactionFilter({
         </div>
       </div>
 
-      {/* Custom Date Range */}
       {period === "custom" && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
           <div>

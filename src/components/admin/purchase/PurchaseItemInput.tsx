@@ -20,7 +20,7 @@ interface RawMaterialSelectorItem {
 }
 
 interface SelectedPurchaseItemUI {
-  id: string; // ID unik untuk item ini di UI
+  id: string;
   type: "raw_material" | "custom";
   raw_material_id?: string;
   raw_material_name: string;
@@ -150,7 +150,6 @@ export function PurchaseItemInput({
     searchInputRef.current?.focus();
   };
 
-  // --- NEW: Add Custom Item & Unit Price Calculator ---
   const [customItemName, setCustomItemName] = useState("");
   const [customItemQuantity, setCustomItemQuantity] = useState(1);
   const [customItemUnit, setCustomItemUnit] = useState("");
@@ -158,11 +157,9 @@ export function PurchaseItemInput({
   const [customItemDescription, setCustomItemDescription] = useState("");
   const [customItemCategory, setCustomItemCategory] = useState("");
 
-  // NEW: State untuk kalkulator harga per unit
   const [totalPackagePrice, setTotalPackagePrice] = useState<number | "">("");
   const [quantityInPackage, setQuantityInPackage] = useState<number | "">("");
 
-  // Hitung unit price otomatis dari totalPackagePrice dan quantityInPackage
   useEffect(() => {
     if (
       typeof totalPackagePrice === "number" &&
@@ -172,7 +169,7 @@ export function PurchaseItemInput({
     ) {
       setCustomItemUnitPrice(totalPackagePrice / quantityInPackage);
     } else if (totalPackagePrice === "" && quantityInPackage === "") {
-      setCustomItemUnitPrice(0); // Reset if both are empty
+      setCustomItemUnitPrice(0);
     }
   }, [totalPackagePrice, quantityInPackage]);
 
@@ -204,15 +201,14 @@ export function PurchaseItemInput({
     };
     setSelectedItems((prevItems) => [...prevItems, newItem]);
 
-    // Reset custom item form
     setCustomItemName("");
     setCustomItemQuantity(1);
     setCustomItemUnit("");
     setCustomItemUnitPrice(0);
     setCustomItemDescription("");
     setCustomItemCategory("");
-    setTotalPackagePrice(""); // Reset kalkulator
-    setQuantityInPackage(""); // Reset kalkulator
+    setTotalPackagePrice("");
+    setQuantityInPackage("");
   };
 
   const handleQuantityChange = (itemId: string, delta: number) => {
@@ -252,7 +248,6 @@ export function PurchaseItemInput({
 
   return (
     <div className="space-y-6">
-      {/* Search Input for Raw Materials */}
       <div>
         <label
           htmlFor="raw_material_search"
@@ -274,7 +269,6 @@ export function PurchaseItemInput({
         )}
       </div>
 
-      {/* Search Results */}
       {searchResults.length > 0 && (
         <div className="border border-clay-pink rounded-md max-h-40 overflow-y-auto bg-white shadow-inner">
           {searchResults.map((item) => (
@@ -306,10 +300,9 @@ export function PurchaseItemInput({
 
       <div className="text-center text-sm text-warm-brown my-4">-- ATAU --</div>
 
-      {/* NEW: Add Custom Item */}
       <div className="border border-clay-pink rounded-lg p-4 bg-light-cream space-y-3">
         <h3 className="text-lg font-display lowercase text-deep-mocha mb-3">
-          tambah item kustom (manual)
+          Tambah Item Kustom (Manual)
         </h3>
         <div>
           <label
@@ -362,7 +355,6 @@ export function PurchaseItemInput({
             />
           </div>
         </div>
-        {/* NEW: Kalkulator Harga Per Unit */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label
@@ -403,7 +395,6 @@ export function PurchaseItemInput({
             />
           </div>
         </div>
-        {/* End Kalkulator Harga Per Unit */}
 
         <div>
           <label
@@ -418,9 +409,8 @@ export function PurchaseItemInput({
             id="custom_item_unit_price"
             value={customItemUnitPrice}
             onChange={(e) => {
-              // Allow manual override if needed
               setCustomItemUnitPrice(parseFloat(e.target.value));
-              setTotalPackagePrice(""); // Clear calculator inputs if manual override
+              setTotalPackagePrice("");
               setQuantityInPackage("");
             }}
             className="w-full p-2 border border-warm-brown rounded-md bg-light-cream text-deep-mocha"
@@ -428,10 +418,9 @@ export function PurchaseItemInput({
               totalPackagePrice !== "" &&
               quantityInPackage !== "" &&
               customItemUnitPrice !== 0
-            } // Disable if calculator is active
+            }
           />
         </div>
-        {/* PENTING: Input Deskripsi Tambahan & Kategori Kustom */}
         <div>
           <label
             htmlFor="custom_item_description"
@@ -473,9 +462,8 @@ export function PurchaseItemInput({
         </button>
       </div>
 
-      {/* Selected Items List */}
       <h3 className="text-lg font-display lowercase text-deep-mocha mt-6">
-        item pembelian
+        Item Pembelian
       </h3>
       {selectedItems.length === 0 ? (
         <p className="text-warm-brown text-sm">

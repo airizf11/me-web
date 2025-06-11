@@ -10,7 +10,7 @@ import Link from "next/link";
 
 interface PurchaseDetailsPageProps {
   params?: Promise<{
-    id: string; // ID transaksi pembelian dari URL
+    id: string;
   }>;
 }
 
@@ -74,12 +74,12 @@ export default async function PurchaseDetailsPage({
   return (
     <div className="p-4 md:p-8">
       <h1 className="text-3xl font-display lowercase text-deep-mocha mb-6">
-        detail pembelian
+        Detail Pembelian
       </h1>
 
       <div className="bg-light-cream p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-xl font-display lowercase text-deep-mocha mb-4">
-          ringkasan
+          Ringkasan
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-deep-mocha font-body">
           <div>
@@ -117,8 +117,7 @@ export default async function PurchaseDetailsPage({
       </div>
 
       <div className="bg-light-cream p-6 rounded-lg shadow-md mb-8">
-        <h2 className="text-xl font-display lowercase mb-4">item pembelian</h2>
-        {/* PENTING: Gunakan Array.isArray() sebagai fallback */}
+        <h2 className="text-xl font-display lowercase mb-4">Item Pembelian</h2>
         {transaction.purchase_items_json &&
         Array.isArray(transaction.purchase_items_json) &&
         transaction.purchase_items_json.length > 0 ? (
@@ -153,7 +152,6 @@ export default async function PurchaseDetailsPage({
                 {transaction.purchase_items_json.map(
                   (item: PurchaseItem, index: number) => (
                     <tr key={index}>
-                      {/* PENTING: Perbaikan di sini. Gunakan raw_material_name */}
                       <td className="px-4 py-3 font-body text-sm">
                         {item.raw_material_name}
                       </td>
@@ -175,7 +173,6 @@ export default async function PurchaseDetailsPage({
                           { style: "currency", currency: "IDR" }
                         )}
                       </td>
-                      {/* PENTING: Tampilkan kategori dan deskripsi kustom */}
                       <td className="px-4 py-3 font-body text-sm">
                         {item.custom_category || "-"}
                       </td>
@@ -198,7 +195,7 @@ export default async function PurchaseDetailsPage({
       {transaction.screenshot_url && (
         <div className="bg-light-cream p-6 rounded-lg shadow-md mb-8">
           <h2 className="text-xl font-display lowercase mb-4">
-            bukti pembelian
+            Bukti Pembelian
           </h2>
           <div className="relative w-full max-w-md mx-auto aspect-[4/3] rounded-lg overflow-hidden border border-deep-mocha shadow-md">
             <Image

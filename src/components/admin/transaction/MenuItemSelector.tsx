@@ -21,7 +21,7 @@ interface MenuItemSelectorItem {
 }
 
 interface SelectedTransactionItem {
-  id: string; // ID unik untuk item ini di UI (bukan ID dari DB)
+  id: string;
   menu_item_id: string;
   menu_item_name: string;
   quantity: number;
@@ -71,8 +71,6 @@ export function MenuItemSelector({
       price_at_transaction: item.price_at_transaction,
     }));
 
-    // Perbandingan menggunakan JSON.stringify untuk deep comparison
-    // Ini adalah cara paling sederhana untuk memastikan array objek dibandingkan nilainya
     const currentItemsString = JSON.stringify(currentItemsData);
     const previousItemsString = JSON.stringify(
       (onItemsChangeRef.current as any).itemsCache || []
@@ -83,7 +81,6 @@ export function MenuItemSelector({
       onTotalAmountChangeRef.current(total);
       onItemsChangeRef.current(currentItemsData);
 
-      // Cache current items data as string to prevent immediate re-trigger on next render
       (onItemsChangeRef.current as any).itemsCache = currentItemsData;
     }
   }, [selectedItems]);
@@ -122,14 +119,13 @@ export function MenuItemSelector({
             : si
         );
       } else {
-        // PENTING: Perbaikan crypto.randomUUID()
         const uniqueLocalId = `${Date.now()}-${Math.random()
           .toString(36)
           .substring(2, 9)}`;
         return [
           ...prevItems,
           {
-            id: uniqueLocalId, // Gunakan ID unik lokal yang robust
+            id: uniqueLocalId,
             menu_item_id: item.id,
             menu_item_name: item.name,
             quantity: 1,
@@ -169,7 +165,6 @@ export function MenuItemSelector({
 
   return (
     <div className="space-y-4">
-      {/* Search Input for Menu Items */}
       <div>
         <label
           htmlFor="menu_search"
@@ -191,7 +186,6 @@ export function MenuItemSelector({
         )}
       </div>
 
-      {/* Search Results */}
       {searchResults.length > 0 && (
         <div className="border border-clay-pink rounded-md max-h-40 overflow-y-auto bg-white shadow-inner">
           {searchResults.map((item) => (
@@ -225,9 +219,8 @@ export function MenuItemSelector({
         </div>
       )}
 
-      {/* Selected Items List */}
       <h3 className="text-lg font-display lowercase text-deep-mocha mt-6">
-        item transaksi
+        Item Transaksi
       </h3>
       {selectedItems.length === 0 ? (
         <p className="text-warm-brown text-sm">

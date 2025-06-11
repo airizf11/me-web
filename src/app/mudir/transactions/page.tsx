@@ -7,9 +7,8 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { type Transaction } from "@/lib/types";
 import { TransactionTable } from "@/components/admin/transaction/TransactionTable";
 import { Suspense } from "react";
-import { TransactionFilter } from "@/components/admin/transaction/TransactionFilter"; // Import TransactionFilter yang terpisah
+import { TransactionFilter } from "@/components/admin/transaction/TransactionFilter";
 
-// Definisikan tipe untuk searchParams agar sesuai dengan PageProps
 interface SegmentSearchParams {
   period?: "daily" | "weekly" | "monthly" | "all";
   platform?: string;
@@ -18,9 +17,8 @@ interface SegmentSearchParams {
   endDate?: string;
 }
 
-// Perbarui tipe props halaman untuk sesuai dengan PageProps
 interface TransactionsManagementPageProps {
-  searchParams?: Promise<SegmentSearchParams>; // searchParams bisa berupa Promise
+  searchParams?: Promise<SegmentSearchParams>;
 }
 
 export const metadata: Metadata = {
@@ -28,16 +26,13 @@ export const metadata: Metadata = {
   description: "Kelola dan tinjau catatan penjualan minuman Menurutmu.",
 };
 
-// Komponen ini adalah Server Component
 export default async function TransactionsManagementPage({
   searchParams,
 }: TransactionsManagementPageProps) {
-  // Gunakan tipe props yang diperbarui
   const supabase = await createServerSupabaseClient();
   let transactions: Transaction[] = [];
   let error: string | null = null;
 
-  // PENTING: AWAIT searchParams sebelum mengakses propertinya
   const resolvedSearchParams = (await searchParams) || {};
 
   try {
@@ -69,24 +64,24 @@ export default async function TransactionsManagementPage({
 
   const platformSources = [
     "All",
-    "GoFood",
-    "GrabFood",
-    "ShopeeFood",
     "WhatsApp",
     "Instagram",
+    "GoFood",
+    "ShopeeFood",
     "Direct-Internal",
     "Walk-in",
+    "GrabFood",
   ];
 
   return (
     <div className="p-4 md:p-8">
       <h1 className="text-3xl font-display lowercase text-deep-mocha mb-6">
-        manajemen transaksi
+        Manajemen Transaksi
       </h1>
 
       <div className="bg-warm-brown text-light-cream p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-2xl font-display lowercase mb-4">
-          ringkasan penjualan
+          Ringkasan Penjualan
         </h2>
         <div className="flex justify-between items-center">
           <span className="text-lg font-body">Total Penjualan:</span>
@@ -110,10 +105,9 @@ export default async function TransactionsManagementPage({
 
       <div className="bg-light-cream p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-2xl font-display lowercase text-deep-mocha mb-4">
-          daftar transaksi
+          Daftar Transaksi
         </h2>
 
-        {/* Filter Section (Client Component yang di-wrap Suspense) */}
         <Suspense
           fallback={
             <div className="text-center text-warm-brown">Memuat filter...</div>

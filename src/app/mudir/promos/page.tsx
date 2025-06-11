@@ -30,10 +30,9 @@ export default function PromosManagementPage() {
         Manajemen Promo
       </h1>
 
-      {/* Ringkasan Promo */}
       <div className="bg-warm-brown text-light-cream p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-2xl font-display lowercase mb-4">
-          ringkasan promo
+          Ringkasan Promo
         </h2>
         <div className="flex justify-between items-center mb-2">
           <span className="text-lg font-body">Promo Aktif Saat Ini:</span>
@@ -49,20 +48,18 @@ export default function PromosManagementPage() {
         </div>
       </div>
 
-      {/* Tombol Tambah Promo Baru */}
       <div className="flex justify-end mb-6">
         <Link
-          href="/mudir/promos/create" // Placeholder link
+          href="/mudir/promos/create" // Placeholder
           className="px-6 py-2 bg-deep-mocha text-light-cream rounded-md font-body hover:bg-warm-brown transition-colors flex items-center"
         >
           <PlusCircleIcon className="h-5 w-5 mr-2" /> Tambah Promo Baru
         </Link>
       </div>
 
-      {/* Bagian Daftar Promo */}
       <div className="bg-light-cream p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-2xl font-display lowercase text-deep-mocha mb-4">
-          daftar promo
+          Daftar Promo
         </h2>
 
         {dummyPromos.length === 0 ? (

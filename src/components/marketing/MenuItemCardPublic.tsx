@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { type MenuItem } from "@/lib/types";
 import { motion } from "framer-motion";
+import { AddToCartButton } from "./AddToCartButton";
 
 type MenuItemCardPublicProps = {
   item: MenuItem;
@@ -33,7 +34,6 @@ export function MenuItemCardPublic({ item }: MenuItemCardPublicProps) {
             className="transition-transform duration-300 group-hover:scale-105"
           />
         </div>
-
         <div className="p-4 text-center">
           <h3 className="text-xl font-display lowercase mb-1 leading-tight truncate">
             {item.name}
@@ -47,6 +47,9 @@ export function MenuItemCardPublic({ item }: MenuItemCardPublicProps) {
           <p className="text-sm font-body text-warm-brown mt-1 truncate">
             {item.description}
           </p>
+          <div className="mt-4">
+            <AddToCartButton item={item} />
+          </div>
         </div>
       </Link>
     </motion.div>

@@ -3,9 +3,9 @@
 
 import Link from "next/link";
 import { type RawMaterial } from "@/lib/types";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline"; // Ikon
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
-import { deleteRawMaterial } from "@/lib/actions/raw_materials"; // Import Server Action
+import { deleteRawMaterial } from "@/lib/actions/raw_materials";
 
 type RawMaterialTableProps = {
   rawMaterials: RawMaterial[];

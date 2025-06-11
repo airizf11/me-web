@@ -3,9 +3,9 @@
 
 import Link from "next/link";
 import { type Transaction } from "@/lib/types";
-import { EyeIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline"; // Ikon
+import { EyeIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
-import { deletePurchaseTransaction } from "@/lib/actions/transactions/purchases"; // Import Server Action
+import { deletePurchaseTransaction } from "@/lib/actions/transactions/purchases";
 
 type PurchaseTableProps = {
   purchases: Transaction[];
@@ -113,7 +113,7 @@ export function PurchaseTable({ purchases }: PurchaseTableProps) {
                   >
                     <EyeIcon className="h-5 w-5" />
                   </Link>
-                  {/* Tombol Edit (placeholder) */}
+                  {/* placeholder */}
                   <button
                     type="button"
                     onClick={() =>

@@ -8,36 +8,33 @@ import { useRouter } from "next/navigation";
 import {
   createPurchaseTransaction,
   updatePurchaseTransaction,
-} from "@/lib/actions/transactions/purchases"; // Server Actions
+} from "@/lib/actions/transactions/purchases";
 import { AssetManager } from "@/components/admin/AssetManager";
-import { PurchaseItemInput } from "./PurchaseItemInput"; // Import PurchaseItemInput
-import { type Transaction, type PurchaseItem } from "@/lib/types"; // Import tipe
+import { PurchaseItemInput } from "./PurchaseItemInput";
+import { type Transaction, type PurchaseItem } from "@/lib/types";
 
 type PurchaseFormProps = {
-  initialData?: Transaction | null; // Untuk mode edit (opsional saat ini)
+  initialData?: Transaction | null;
 };
 
 export function PurchaseForm({ initialData }: PurchaseFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
-  const [loading, setLoading] = useState(false); // Untuk tombol submit utama
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string[] } | null>(
     null
   );
   const router = useRouter();
 
-  // State untuk data transaksi pembelian
   const [transactionTimestamp, setTransactionTimestamp] = useState("");
   const [totalAmount, setTotalAmount] = useState(0);
-  const [platformSource, setPlatformSource] = useState(""); // Untuk supplier/sumber pembelian
+  const [platformSource, setPlatformSource] = useState("");
   const [notes, setNotes] = useState("");
   const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
 
-  // State untuk item pembelian yang dipilih
   const [selectedPurchaseItems, setSelectedPurchaseItems] = useState<
-    Omit<PurchaseItem, "id" | "subtotal">[] // Sesuaikan tipe di sini
+    Omit<PurchaseItem, "id" | "subtotal">[]
   >([]);
 
-  // Callback untuk sinkronisasi state form
   const syncFormStateWithInitialData = useCallback(() => {
     const now = new Date();
     const defaultTimestamp = `${now.getFullYear()}-${(now.getMonth() + 1)
@@ -58,7 +55,6 @@ export function PurchaseForm({ initialData }: PurchaseFormProps) {
     setPlatformSource(initialData?.platform_source || "");
     setNotes(initialData?.notes || "");
     setScreenshotUrl(initialData?.screenshot_url || null);
-    // PENTING: Pastikan initialData?.purchase_items_json adalah array saat inisialisasi
     setSelectedPurchaseItems(
       Array.isArray(initialData?.purchase_items_json)
         ? initialData.purchase_items_json.map((item) => ({
@@ -80,7 +76,6 @@ export function PurchaseForm({ initialData }: PurchaseFormProps) {
     syncFormStateWithInitialData();
   }, [syncFormStateWithInitialData]);
 
-  // Handler untuk PurchaseItemInput
   const handleSelectedItemsChange = (
     items: Omit<PurchaseItem, "id" | "subtotal">[]
   ) => {
@@ -96,15 +91,13 @@ export function PurchaseForm({ initialData }: PurchaseFormProps) {
     setErrors(null);
     toast.dismiss();
 
-    // Pastikan item pembelian dimasukkan sebagai JSON string
     formData.set("items", JSON.stringify(selectedPurchaseItems));
-    // Set type dan status untuk transaksi pembelian
     formData.set("type", "purchase");
-    formData.set("status", "paid"); // Atau 'pending', 'received'
+    formData.set("status", "paid");
 
     let result;
     if (initialData?.id) {
-      // Untuk mode edit, kita akan implementasikan nanti
+      // Untuk edit nanti
       result = await updatePurchaseTransaction(initialData.id, formData);
     } else {
       result = await createPurchaseTransaction(formData);
@@ -113,8 +106,8 @@ export function PurchaseForm({ initialData }: PurchaseFormProps) {
     if (result.success) {
       toast.success(result.message);
       formRef.current?.reset();
-      syncFormStateWithInitialData(); // Reset form ke default
-      router.push("/mudir/purchases"); // Redirect ke halaman daftar pembelian
+      syncFormStateWithInitialData();
+      router.push("/mudir/purchases");
     } else {
       toast.error(result.message || "Operasi gagal.");
       if (result.errors) {
@@ -127,10 +120,9 @@ export function PurchaseForm({ initialData }: PurchaseFormProps) {
 
   return (
     <form ref={formRef} action={handleSubmit} className="space-y-6">
-      {/* Transaction Details (Pembelian) */}
       <div className="bg-warm-brown text-light-cream p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-display lowercase mb-4">
-          detail pembelian
+          Detail Pembelian
         </h2>
         <div>
           <label
@@ -199,9 +191,8 @@ export function PurchaseForm({ initialData }: PurchaseFormProps) {
         </div>
       </div>
 
-      {/* PurchaseItem Input - Tambahkan styling blok berwarna */}
       <div className="bg-warm-brown text-light-cream p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-display lowercase mb-4">item pembelian</h2>
+        <h2 className="text-xl font-display lowercase mb-4">Item Pembelian</h2>
         <PurchaseItemInput
           onItemsChange={handleSelectedItemsChange}
           onTotalAmountChange={handleTotalAmountChange}
@@ -210,7 +201,7 @@ export function PurchaseForm({ initialData }: PurchaseFormProps) {
               ? initialData.purchase_items_json.map((item) => ({
                   id:
                     item.raw_material_id ||
-                    `${item.raw_material_name}-${item.quantity}-${item.unit_price}`, // Fallback ID
+                    `${item.raw_material_name}-${item.quantity}-${item.unit_price}`,
                   type: item.type,
                   raw_material_id: item.raw_material_id,
                   raw_material_name: item.raw_material_name,
@@ -240,7 +231,6 @@ export function PurchaseForm({ initialData }: PurchaseFormProps) {
         </div>
       </div>
 
-      {/* Screenshot Bukti Pembelian */}
       <div className="bg-warm-brown text-light-cream p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-display lowercase mb-4">
           bukti pembelian (opsional)

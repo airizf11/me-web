@@ -12,7 +12,7 @@ export default function CreatePurchasePage() {
   return (
     <div className="p-4 md:p-8">
       <h1 className="text-3xl font-display lowercase text-deep-mocha mb-6">
-        catat pembelian baru
+        Catat Pembelian Baru
       </h1>
 
       <div className="bg-light-cream p-6 rounded-lg shadow-md">

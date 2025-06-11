@@ -22,7 +22,6 @@ export function TransactionForm({ initialData }: TransactionFormProps) {
   );
   const router = useRouter();
 
-  // State untuk data transaksi
   const [transactionTimestamp, setTransactionTimestamp] = useState("");
   const [totalAmount, setTotalAmount] = useState(0);
   const [platformSource, setPlatformSource] = useState("");
@@ -37,7 +36,6 @@ export function TransactionForm({ initialData }: TransactionFormProps) {
   const [isPickup, setIsPickup] = useState(false);
   const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
 
-  // State untuk item transaksi yang dipilih
   const [selectedTransactionItems, setSelectedTransactionItems] = useState<
     Omit<
       TransactionItem,
@@ -45,7 +43,6 @@ export function TransactionForm({ initialData }: TransactionFormProps) {
     >[]
   >([]);
 
-  // Callback untuk sinkronisasi state form
   const syncFormStateWithInitialData = useCallback(() => {
     const now = new Date();
     const defaultTimestamp = `${now.getFullYear()}-${(now.getMonth() + 1)
@@ -88,7 +85,6 @@ export function TransactionForm({ initialData }: TransactionFormProps) {
     syncFormStateWithInitialData();
   }, [syncFormStateWithInitialData]);
 
-  // Handler untuk MenuItemSelector
   const handleSelectedItemsChange = (
     items: Omit<
       TransactionItem,
@@ -134,21 +130,20 @@ export function TransactionForm({ initialData }: TransactionFormProps) {
   };
 
   const platformSources = [
-    "GoFood",
-    "GrabFood",
-    "ShopeeFood",
     "WhatsApp",
     "Instagram",
+    "GoFood",
+    "ShopeeFood",
     "Direct-Internal",
     "Walk-in",
+    "GrabFood",
   ];
 
   return (
     <form ref={formRef} action={handleSubmit} className="space-y-6">
-      {/* Transaction Details */}
       <div className="bg-warm-brown text-light-cream p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-display lowercase mb-4">
-          detail transaksi
+          Detail Transaksi
         </h2>
         <div>
           <label
@@ -223,10 +218,9 @@ export function TransactionForm({ initialData }: TransactionFormProps) {
         </div>
       </div>
 
-      {/* Customer Details */}
       <div className="bg-warm-brown text-light-cream p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-display lowercase mb-4">
-          detail pelanggan
+          Detail Pelanggan
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -409,12 +403,10 @@ export function TransactionForm({ initialData }: TransactionFormProps) {
         )}
       </div>
 
-      {/* MenuItem Selector - Tambahkan styling blok berwarna */}
       <div className="bg-warm-brown text-light-cream p-6 rounded-lg shadow-md">
         {" "}
-        {/* Blok berwarna */}
         <h2 className="text-xl font-display lowercase mb-4">
-          item yang terjual
+          Item yang Terjual
         </h2>
         <MenuItemSelector
           onItemsChange={handleSelectedItemsChange}
@@ -434,7 +426,6 @@ export function TransactionForm({ initialData }: TransactionFormProps) {
         )}
         <div className="mt-6 border-t border-clay-pink/50 pt-4 flex justify-between items-center text-deep-mocha">
           {" "}
-          {/* Border dan teks agar sesuai konteks */}
           <span className="text-lg font-body">Total Transaksi:</span>
           <span className="text-2xl font-display font-bold">
             {totalAmount.toLocaleString("id-ID", {
@@ -446,12 +437,10 @@ export function TransactionForm({ initialData }: TransactionFormProps) {
         </div>
       </div>
 
-      {/* Screenshot Upload - Tambahkan styling blok berwarna */}
       <div className="bg-warm-brown text-light-cream p-6 rounded-lg shadow-md">
         {" "}
-        {/* Blok berwarna */}
         <h2 className="text-xl font-display lowercase mb-4">
-          screenshot transaksi (opsional)
+          Screenshot Transaksi (Opsional)
         </h2>
         <AssetManager
           onAssetSelect={setScreenshotUrl}

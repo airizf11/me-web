@@ -6,6 +6,7 @@ import Link from "next/link";
 import { getMenuItemBySlug } from "@/lib/actions/menu";
 import { HeroSection } from "@/components/marketing/HeroSection";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { AddToCartButton } from "@/components/marketing/AddToCartButton";
 
 function GradientDivider({
   topColor,
@@ -149,12 +150,9 @@ export default async function MenuDetailsPage({
               </div>
 
               <div className="mt-8">
-                <Link
-                  href="/checkout"
-                  className="inline-flex items-center px-8 py-4 bg-deep-mocha text-light-cream rounded-full font-body text-lg hover:bg-warm-brown transition-colors duration-300 shadow-lg"
-                >
-                  Pesan Sekarang
-                </Link>
+                <div className="mt-auto">
+                  <AddToCartButton item={menuItem} className="w-full text-lg" />
+                </div>
               </div>
             </div>
 
