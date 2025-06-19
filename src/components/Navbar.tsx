@@ -59,7 +59,8 @@ export function Navbar({
     }
   }, []);
 
-  const isHeroPage = pathname === "/" || pathname.startsWith("/menu/");
+  const isHeroPage = pathname === "/";
+  // || pathname.startsWith("/menu/");
   const scrollThreshold = isHeroPage ? heroHeight * 0.7 : 20;
   const opacity =
     scrollY > scrollThreshold

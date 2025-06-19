@@ -17,7 +17,7 @@ type AddToCartButtonProps = {
 export function AddToCartButton({
   item,
   text = "Tambah ke Keranjang",
-  className = "px-6 py-2 bg-deep-mocha text-light-cream rounded-full font-body hover:bg-warm-brown transition-colors",
+  className,
 }: AddToCartButtonProps) {
   const { addItem } = useCartStore();
   const [added, setAdded] = useState(false);
@@ -32,15 +32,19 @@ export function AddToCartButton({
     }, 2000);
   };
 
+  const baseClasses =
+    "flex items-center justify-center rounded-full font-body transition-colors duration-300";
+  const defaultColorClasses =
+    "bg-deep-mocha text-light-cream hover:bg-warm-brown";
+  const addedColorClasses = "bg-green-600 hover:bg-green-700 text-white";
+
   return (
     <button
       onClick={handleAddToCart}
       className={clsx(
-        "flex items-center justify-center transition-colors duration-300 w-full",
-        className,
-        {
-          "bg-green-600 hover:bg-green-700": added,
-        }
+        baseClasses,
+        added ? addedColorClasses : defaultColorClasses,
+        className
       )}
       disabled={added}
     >
