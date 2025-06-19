@@ -1,13 +1,13 @@
+// src/lib/actions/dashboard.ts
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// src/lib/actions/dashboard.ts
 "use server";
 
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import {
   type Transaction,
-  type MenuItem,
-  type TransactionItem,
+  // type MenuItem,
+  // type TransactionItem,
 } from "@/lib/types";
 import { getTransactions } from "./transactions/read";
 
@@ -24,12 +24,12 @@ function getDateRange(period: "daily" | "weekly" | "monthly" | "all"): {
   if (period === "daily") {
     startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   } else if (period === "weekly") {
-    const dayOfWeek = now.getDay(); // 0 for Sunday, 1 for Monday, etc.
-    startDate = new Date(now.setDate(now.getDate() - dayOfWeek)); // Start of the current week (Sunday)
-    startDate.setHours(0, 0, 0, 0); // Reset time to midnight
+    const dayOfWeek = now.getDay();
+    startDate = new Date(now.setDate(now.getDate() - dayOfWeek));
+    startDate.setHours(0, 0, 0, 0);
   } else if (period === "monthly") {
-    startDate = new Date(now.getFullYear(), now.getMonth(), 1); // First day of current month
-    startDate.setHours(0, 0, 0, 0); // Reset time to midnight
+    startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+    startDate.setHours(0, 0, 0, 0);
   } else {
     // 'all'
     startDate = null;
@@ -135,7 +135,7 @@ export async function getMenuAndCarouselCounts() {
   const supabase = await createServerSupabaseClient();
   let menuCount = 0;
   let carouselCount = 0;
-  const promoCount = 0; // Tambahkan ini (jika nanti ada tabel promo)
+  const promoCount = 0;
   let error: string | null = null;
 
   try {
@@ -155,7 +155,7 @@ export async function getMenuAndCarouselCounts() {
     if (carouselError) throw carouselError;
     carouselCount = fetchedCarouselCount || 0;
 
-    // Untuk promo (jika sudah ada tabel 'promos')
+    // Untuk promo jika sudah ada
     // const { count: fetchedPromoCount, error: promoError } = await supabase
     //   .from('promos')
     //   .select('*', { count: 'exact', head: true })
@@ -170,7 +170,6 @@ export async function getMenuAndCarouselCounts() {
   return { menuCount, carouselCount, promoCount, error };
 }
 
-// --- GET RECENT SALES TRANSACTIONS --- (tetap sama)
 export async function getRecentSalesTransactions(limit: number = 5) {
   const supabase = await createServerSupabaseClient();
 
@@ -186,7 +185,6 @@ export async function getRecentSalesTransactions(limit: number = 5) {
   return { data: recentSales, error: null };
 }
 
-// --- GET TOP SELLING MENUS (Complex Query) --- (tetap sama)
 export async function getTopSellingMenus(
   limit: number = 5,
   period: "monthly" | "all" = "monthly"
@@ -212,7 +210,7 @@ export async function getTopSellingMenus(
     .eq("transaction.type", "sale");
 
   if (period === "monthly") {
-    const { startDate, endDate } = getDateRange(period); // Gunakan helper
+    const { startDate, endDate } = getDateRange(period);
     if (startDate) {
       query = query
         .gte("transaction.transaction_timestamp", startDate)
@@ -262,7 +260,6 @@ export async function getTopSellingMenus(
   return { data: sortedTopMenus, error: null };
 }
 
-// --- GET TOP SPENDING ITEMS (Complex Query for Purchases) ---
 export async function getTopSpendingItems(
   limit: number = 3,
   period: "monthly" | "all" = "monthly"
@@ -331,7 +328,7 @@ export async function getTopSpendingItems(
   });
 
   const sortedTopItems = Object.values(aggregatedPurchases)
-    .sort((a, b) => b.totalCost - a.totalCost) // Urutkan berdasarkan total biaya
+    .sort((a, b) => b.totalCost - a.totalCost)
     .slice(0, limit);
 
   return { data: sortedTopItems, error: null };

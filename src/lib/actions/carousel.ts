@@ -1,12 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/lib/actions/carousel.ts
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use server";
 
 import { revalidatePath } from "next/cache";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { z } from "zod";
 import { type CarouselSlide } from "@/lib/types";
-import { uploadAssetToSupabase } from "./assets";
+// import { uploadAssetToSupabase } from "./assets";
 
 const CarouselSlideSchema = z.object({
   id: z.string().uuid().optional(),

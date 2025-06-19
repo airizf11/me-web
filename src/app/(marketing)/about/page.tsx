@@ -1,5 +1,5 @@
-/* eslint-disable react/no-unescaped-entities */
 // src/app/(marketing)/about/page.tsx
+/* eslint-disable react/no-unescaped-entities */
 import { Link } from "lucide-react";
 import { Metadata } from "next";
 

@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/app/(marketing)/menu/page.tsx
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Metadata } from "next";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { type MenuItem } from "@/lib/types";

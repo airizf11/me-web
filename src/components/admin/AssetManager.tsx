@@ -1,6 +1,6 @@
+// src/components/admin/AssetManager.tsx
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// src/components/admin/AssetManager.tsx
 "use client";
 
 import { useState, useEffect, useRef } from "react";

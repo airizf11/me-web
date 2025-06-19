@@ -7,9 +7,6 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "via.placeholder.com",
-        // port: '',
-        // pathname: '/account123/**',
-        // search: '',
       },
       {
         protocol: "https",

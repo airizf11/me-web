@@ -1,6 +1,6 @@
+// src/app/(marketing)/page.tsx
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// src/app/(marketing)/page.tsx
 import { Metadata } from "next";
 import { HeroSection } from "@/components/marketing/HeroSection";
 import { Carousel } from "@/components/Carousel";

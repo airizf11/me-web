@@ -27,6 +27,7 @@ const adminNavItems = [
     href: "/mudir/transactions",
     icon: ShoppingCartIcon,
   },
+  { name: "Manajemen Promo", href: "/mudir/promos", icon: ShoppingCartIcon },
   {
     name: "Catatan Pembelian",
     href: "/mudir/purchases",

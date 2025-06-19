@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/lib/actions/assets.ts
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
 import { createServerSupabaseClient } from "@/lib/supabase/server";

@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/lib/supabase/server.ts
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
 

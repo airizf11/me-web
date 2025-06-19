@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/components/marketing/CartDrawer.tsx
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { Fragment, useState } from "react";

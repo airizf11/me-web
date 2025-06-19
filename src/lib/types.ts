@@ -90,6 +90,23 @@ export type RawMaterial = {
   updated_at: string;
 };
 
+export type Promo = {
+  id: string;
+  name: string;
+  description: string;
+  code: string | null;
+  type: "percentage" | "fixed_amount" | "bogo";
+  value: number;
+  min_order_amount: number | null;
+  start_date: string;
+  end_date: string;
+  is_active: boolean;
+  target_type: "all" | "category" | "menu_item";
+  target_ids: string[] | null;
+  created_at: string;
+  updated_at: string;
+};
+
 export type Quote = {
   id: string;
   text: string;

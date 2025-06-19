@@ -1,5 +1,5 @@
-/* eslint-disable react/no-unescaped-entities */
 // src/app/not-found.tsx
+/* eslint-disable react/no-unescaped-entities */
 import Link from "next/link";
 import { CubeTransparentIcon } from "@heroicons/react/24/outline";
 
