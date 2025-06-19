@@ -3,7 +3,8 @@
 
 import React from "react";
 import { type MenuItem } from "@/lib/types";
-import { MenuItemCardPublic } from "./MenuItemCardPublic";
+// import { MenuItemCardPublic } from "./MenuItemCardPublic";
+import { HomepageMenuItemCard } from "./HomepageMenuItemCard";
 
 type MenuCategorySectionProps = {
   categoryName: string;
@@ -33,7 +34,7 @@ export function MenuCategorySection({
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {menus.map((menu) => (
-          <MenuItemCardPublic key={menu.id} item={menu} />
+          <HomepageMenuItemCard key={menu.id} item={menu} />
         ))}
       </div>
     </section>

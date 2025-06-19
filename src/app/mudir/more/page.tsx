@@ -74,7 +74,7 @@ const allAdminFeatures = [
     href: "/mudir/promos",
     icon: ReceiptPercentIcon,
     description: "Buat dan kelola promo aktif. (Akan Datang)",
-  }, // Placeholder
+  },
   {
     name: "Manajemen Pengguna",
     href: "/mudir/users",

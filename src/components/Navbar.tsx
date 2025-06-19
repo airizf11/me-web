@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect, useRef } from "react";
 import {
   Popover,
   PopoverButton,
@@ -17,6 +17,7 @@ import {
 } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import { usePathname } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -35,51 +36,63 @@ export function Navbar({
   const [scrollY, setScrollY] = useState(0);
   const [heroHeight, setHeroHeight] = useState(0);
   const pathname = usePathname();
+  const [isCartAnimating, setIsCartAnimating] = useState(false);
+  const prevCartItemCount = useRef(cartItemCount);
 
   useEffect(() => {
-    setHeroHeight(window.innerHeight);
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
+    if (cartItemCount > prevCartItemCount.current) {
+      setIsCartAnimating(true);
+      const timer = setTimeout(() => setIsCartAnimating(false), 600);
+      return () => clearTimeout(timer);
+    }
+    prevCartItemCount.current = cartItemCount;
+  }, [cartItemCount]);
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setHeroHeight(window.innerHeight);
+      const handleScroll = () => {
+        setScrollY(window.scrollY);
+      };
+      window.addEventListener("scroll", handleScroll);
+      return () => window.removeEventListener("scroll", handleScroll);
+    }
   }, []);
 
-  const isHeroPage =
-    pathname === "/" || pathname.startsWith("/menu/") || pathname === "/menu";
-  const scrollThreshold = isHeroPage ? heroHeight * 0.7 : 0;
+  const isHeroPage = pathname === "/" || pathname.startsWith("/menu/");
+  const scrollThreshold = isHeroPage ? heroHeight * 0.7 : 20;
+  const opacity =
+    scrollY > scrollThreshold
+      ? 1
+      : isHeroPage
+      ? Math.min(1, scrollY / scrollThreshold)
+      : 1;
+  const navbarBg = `rgba(109, 76, 65, ${opacity})`;
+  const isSolid = opacity >= 0.9;
 
-  const opacity = isHeroPage ? Math.min(1, scrollY / scrollThreshold) : 1;
-
-  const baseColor = { r: 109, g: 76, b: 65 };
-  const navbarBg = `rgba(${baseColor.r}, ${baseColor.g}, ${baseColor.b}, ${opacity})`;
-
-  const isSolid = opacity > 0.5;
   const textColor =
     isHeroPage && !isSolid ? "text-light-cream" : "text-light-cream";
-  const hoverTextColor =
-    isHeroPage && !isSolid ? "hover:text-clay-pink" : "hover:text-warm-brown";
-
-  const buttonBgColor =
-    isHeroPage && !isSolid ? "bg-light-cream" : "bg-clay-pink";
-  const buttonTextColor =
-    isHeroPage && !isSolid ? "text-deep-mocha" : "text-deep-mocha";
-  const buttonHoverBgColor =
-    isHeroPage && !isSolid ? "hover:bg-clay-pink" : "hover:bg-warm-brown";
+  const hoverTextColor = "hover:text-clay-pink";
+  const buttonTextColor = "text-deep-mocha";
+  const buttonBgColor = "bg-clay-pink";
+  const buttonHoverBgColor = "hover:bg-warm-brown hover:text-light-cream";
 
   return (
     <Popover
-      className={clsx(
-        "fixed inset-x-0 top-0 z-50 transition-shadow duration-300",
-        scrollY >= scrollThreshold && "shadow-md"
-      )}
-      style={{
-        backgroundColor: navbarBg,
+      as={motion.header}
+      initial={false}
+      animate={{
+        boxShadow:
+          scrollY > scrollThreshold
+            ? "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)"
+            : "none",
       }}
+      transition={{ duration: 0.3 }}
+      className="fixed inset-x-0 top-0 z-50"
+      style={{ backgroundColor: navbarBg }}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="flex items-center justify-between py-6 md:justify-start md:space-x-10">
+        <div className="flex h-16 items-center justify-between md:justify-start md:space-x-10">
           <div className="flex justify-start lg:w-0 lg:flex-1">
             <Link
               href="/"
@@ -93,14 +106,7 @@ export function Navbar({
           </div>
 
           <div className="-my-2 -mr-2 md:hidden">
-            <PopoverButton
-              className={clsx(
-                "relative inline-flex items-center justify-center rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-inset",
-                isHeroPage && !isSolid
-                  ? "bg-transparent text-light-cream hover:bg-white/20 focus:ring-light-cream"
-                  : "bg-transparent text-light-cream hover:bg-white/20 focus:ring-light-cream"
-              )}
-            >
+            <PopoverButton className="relative inline-flex items-center justify-center rounded-md bg-transparent p-2 text-light-cream hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-light-cream">
               <span className="sr-only">Open menu</span>
               <Bars3Icon className="h-6 w-6" aria-hidden="true" />
             </PopoverButton>
@@ -123,27 +129,46 @@ export function Navbar({
           </PopoverGroup>
 
           <div className="hidden items-center justify-end md:flex md:flex-1 lg:w-0">
-            <button
+            <motion.button
               onClick={onCartClick}
-              className="hidden md:flex items-center ml-4 p-2 rounded-full relative"
-            >
-              <ShoppingCartIcon
-                className={clsx(
-                  "h-6 w-6 transition-colors",
-                  textColor,
-                  hoverTextColor
-                )}
-              />
-              {cartItemCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
-                  {cartItemCount}
-                </span>
+              className={clsx(
+                "hidden md:flex items-center justify-center rounded-full relative transition-all duration-300",
+                cartItemCount > 0 ? "bg-white/10 pr-4" : "pr-2",
+                "pl-4 py-2"
               )}
-            </button>
+              aria-label={`Buka keranjang, ${cartItemCount} item`}
+              animate={
+                isCartAnimating
+                  ? { scale: [1, 1.1, 1], rotate: [0, -5, 5, 0] }
+                  : {}
+              }
+              transition={{ duration: 0.6, ease: "easeInOut" }}
+            >
+              <ShoppingCartIcon className={clsx("h-6 w-6", textColor)} />
+              <AnimatePresence>
+                {cartItemCount > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, width: 0, marginLeft: 0 }}
+                    animate={{
+                      opacity: 1,
+                      width: "auto",
+                      marginLeft: "0.5rem",
+                    }}
+                    exit={{ opacity: 0, width: 0, marginLeft: 0 }}
+                    className="flex items-center overflow-hidden"
+                  >
+                    <span className={clsx("text-sm font-body", textColor)}>
+                      {cartItemCount} item
+                    </span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.button>
+
             <Link
               href="/checkout"
               className={clsx(
-                "whitespace-nowrap rounded-full px-6 py-2 text-base font-body transition-colors",
+                "ml-4 whitespace-nowrap rounded-full px-6 py-2 text-base font-body transition-colors",
                 buttonBgColor,
                 buttonTextColor,
                 buttonHoverBgColor
@@ -169,7 +194,7 @@ export function Navbar({
           className="absolute inset-x-0 top-0 z-10 origin-top-right transform p-2 transition md:hidden"
         >
           {({ close }) => (
-            <div className="divide-y-2 divide-warm-brown rounded-lg bg-deep-mocha shadow-lg ring-1 ring-black ring-opacity-5">
+            <div className="divide-y-2 divide-warm-brown/50 rounded-lg bg-deep-mocha shadow-lg ring-1 ring-black ring-opacity-5">
               <div className="px-5 pb-6 pt-5">
                 <div className="flex items-center justify-between">
                   <div>
@@ -184,7 +209,7 @@ export function Navbar({
                     </PopoverButton>
                   </div>
                 </div>
-                <div className="mt-6">
+                <div className="mt-8">
                   <nav className="grid gap-y-8">
                     {navigation.map((item) => (
                       <Link
@@ -203,19 +228,6 @@ export function Navbar({
               </div>
               <div className="space-y-6 px-5 py-6">
                 <div>
-                  <button
-                    onClick={onCartClick}
-                    className="md:hidden p-2 rounded-full relative"
-                  >
-                    <ShoppingCartIcon
-                      className={clsx("h-6 w-6 transition-colors", textColor)}
-                    />
-                    {cartItemCount > 0 && (
-                      <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
-                        {cartItemCount}
-                      </span>
-                    )}
-                  </button>
                   <Link
                     href="/checkout"
                     onClick={() => close()}
