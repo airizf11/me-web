@@ -1,12 +1,12 @@
+// src/lib/actions/transactions/purchases.ts
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// src/lib/actions/transactions/purchases.ts
 "use server";
 
 import { revalidatePath } from "next/cache";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { z } from "zod";
-import { type Transaction, type PurchaseItem } from "@/lib/types";
+// import { type Transaction, type PurchaseItem } from "@/lib/types";
 
 const PurchaseItemInputSchema = z.object({
   id: z.string().optional(),

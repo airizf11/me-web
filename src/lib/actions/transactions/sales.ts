@@ -1,16 +1,12 @@
+// src/lib/actions/transactions/sales.ts
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// src/lib/actions/transactions/sales.ts
 "use server";
 
 import { revalidatePath } from "next/cache";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { z } from "zod";
-import {
-  type Transaction,
-  type TransactionItem,
-  type MenuItem,
-} from "@/lib/types";
+// import { type Transaction, type TransactionItem, type MenuItem } from "@/lib/types";
 
 const TransactionItemInputSchema = z.object({
   menu_item_id: z.string().uuid("ID Menu tidak valid."),

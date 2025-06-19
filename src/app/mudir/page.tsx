@@ -32,7 +32,6 @@ export const metadata: Metadata = {
 };
 
 export default async function MudirDashboardPage() {
-  // Fetch semua data dashboard secara paralel
   const [
     monthlySalesSummary,
     monthlyPurchaseSummary,
@@ -58,7 +57,6 @@ export default async function MudirDashboardPage() {
         selamat datang, mudir!
       </h1>
 
-      {/* --- Kategori: Gambaran Umum (Overview) --- */}
       <div className="mb-10">
         <h2 className="text-2xl font-display lowercase text-deep-mocha mb-6">
           gambaran umum
@@ -126,7 +124,7 @@ export default async function MudirDashboardPage() {
           >
             <StatisticCard
               title="Total Aset"
-              value="?" // Data ini akan diambil nanti dari actions/assets/getAssets().data.length
+              value="?" // Placeholder ?
               description="gambar & audio"
               icon={FolderIcon}
               // error={assetsCount.error} // Jika sudah ada
@@ -135,7 +133,6 @@ export default async function MudirDashboardPage() {
         </div>
       </div>
 
-      {/* --- Kategori: Penjualan --- */}
       <div className="mb-10">
         <h2 className="text-2xl font-display lowercase text-deep-mocha mb-6">
           penjualan
@@ -209,7 +206,7 @@ export default async function MudirDashboardPage() {
           >
             <StatisticCard
               title="Profit (Gross) Bulan Ini"
-              value="?" // Perlu perhitungan HPP dan total_amount
+              value="?" // Placeholder ?
               description="estimasi profit"
               icon={CurrencyDollarIcon}
               // error={profitSummary.error}
@@ -218,7 +215,6 @@ export default async function MudirDashboardPage() {
         </div>
       </div>
 
-      {/* --- Kategori: Pengeluaran --- */}
       <div className="mb-10">
         <h2 className="text-2xl font-display lowercase text-deep-mocha mb-6">
           pengeluaran
@@ -264,13 +260,11 @@ export default async function MudirDashboardPage() {
               error={monthlyPurchaseSummary.error}
             />
           </Suspense>
-          {/* Bisa tambahkan metrik lain seperti biaya bahan baku, biaya operasional */}
+          {/* Bisa tambah metrik lain like biaya bahan baku, biaya operasional dll */}
         </div>
       </div>
 
-      {/* --- Highlight Kinerja (Transaksi Terbaru & Menu Terlaris) --- */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
-        {/* Transaksi Penjualan Terbaru */}
         <div className="bg-light-cream p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-display lowercase text-deep-mocha mb-4">
             transaksi penjualan terbaru
@@ -297,7 +291,6 @@ export default async function MudirDashboardPage() {
           </div>
         </div>
 
-        {/* Menu Terlaris */}
         <div className="bg-light-cream p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-display lowercase text-deep-mocha mb-4">
             menu terlaris bulan ini
@@ -325,7 +318,6 @@ export default async function MudirDashboardPage() {
         </div>
       </div>
 
-      {/* --- Item Pengeluaran Teratas --- */}
       <div className="bg-light-cream p-6 rounded-lg shadow-md mb-10">
         <h2 className="text-xl font-display lowercase text-deep-mocha mb-4">
           item pengeluaran teratas bulan ini
@@ -353,19 +345,16 @@ export default async function MudirDashboardPage() {
         </div>
       </div>
 
-      {/* --- Placeholder untuk Promo Aktif --- */}
+      {/* --- Placeholder Promo --- */}
       <div className="bg-light-cream p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-display lowercase text-deep-mocha mb-4">
           promo aktif & akan datang
         </h2>
         <div className="flex items-center justify-center h-24 text-warm-brown font-body">
           <PresentationChartLineIcon className="h-8 w-8 mr-2" />
-          <span>Fitur manajemen promo akan segera hadir!</span>
+          <span>Akan segera hadir!</span>
         </div>
       </div>
     </div>
   );
 }
-
-// Catatan: Saya tidak membuat komponen CategoryOverview karena cukup langsung di page.tsx
-// Saya akan membuat TopSpendingItemsList.tsx
