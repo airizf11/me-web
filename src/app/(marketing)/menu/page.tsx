@@ -34,7 +34,7 @@ async function getMenuData() {
     const { data, error: dbError } = await supabase
       .from("menus")
       .select("*")
-      // .eq("is_available", true)
+      .eq("is_available", true)
       .order("order_index", { ascending: true })
       .order("name", { ascending: true });
 

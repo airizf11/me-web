@@ -161,7 +161,6 @@ export default async function MenuDetailsPage({
 
       <section className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pb-12 md:pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 mt-12">
-          {/* KOLOM KIRI: GALERI GAMBAR */}
           <div className="lg:sticky top-28 h-full">
             <ProductImageGallery
               mainImage={menuItem.image_url || "/images/menu-placeholder.jpg"}
@@ -170,11 +169,7 @@ export default async function MenuDetailsPage({
             />
           </div>
 
-          {/* KOLOM KANAN: DETAIL PRODUK */}
           <div className="flex flex-col">
-            {/* ==================================================== */}
-            {/* DETAIL KATEGORI & STATUS KETERSEDIAAN */}
-            {/* ==================================================== */}
             <div className="flex flex-wrap items-center gap-4 mb-4">
               <span className="bg-clay-pink/50 text-deep-mocha px-3 py-1 rounded-full text-sm font-semibold">
                 {menuItem.category}
